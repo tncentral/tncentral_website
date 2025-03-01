@@ -1,0 +1,116 @@
+[default]
+# env can be development or production
+ENV='production'
+TNC_HOME='#TOCHANGE'
+TNC_HOME_PRODUCTION='#TOCHANGE'
+
+# Main directories
+TNC_DATA_DIR='data/'
+TNC_BASE_DIR='base/' # it will be data/base
+TNC_CURRENT_DIR='current/' # it will be data/current
+TNC_SNAPSHOT_DIR='snapshot/' # it will be data/snapshot
+
+# Directories under current dir
+TNC_GENBANK_DIR='gb/'  # it will be data/current/gb/
+TNC_IMAGE_DIR='images/'  # it will be data/current/images/
+TNC_SNAP_DIR='snapgene/'  # it will be data/current/snapgene/
+TNC_FASTA_DIR='fa/'  # it will be data/current/fa/
+TNC_FASTA_FMT_DIR='fa_fmt/'  # it will be data/current/fa_fmt/
+TNC_CSV_DIR='csv/'  # it will be data/current/csv/
+TNC_RESOURCES_DIR='resources/' # it will be data/current/resources/
+TNC_PUBMED_DIR='pubmed/' # it will be data/current/pubmed/
+TNC_TEMP_DIR='temp/'  # it will be data/current/temp/
+TNC_JOB_DIR='jobs/'  # it will be data/current/jobs/
+
+## Filenames inside current directory
+SQLALCHEMY_FILENAME='flask_tn.db'
+TNC_DATABASE_NAME='flask_tn.db'
+TNC_FASTA_FILE="tncentral.fa"
+TNC_PROTEIN_FILE="tncentral.prot.fa"
+TNC_GENBANK_FILE="tncentral.gb"
+TNC_CSV_FILE="tncentral.csv"
+TNC_SNAPGENE_FILE="tncentral.dna"
+
+# Files to import or export the database
+TNC_IMG_ARCHIVE="images.zip"
+TNC_GB_ARCHIVE="gb.zip"
+TNC_SNAP_ARCHIVE="snapgene.zip"
+
+## Log folder and files
+TNC_LOG_DIR='logs/'
+TNC_LOG_FILE='tncentral.log'
+TNC_LOG_MAIL='mail.log'
+
+## All configuration for Redis Queue (RQ Module)
+RQ_JOB_PREFIX='JOB_'
+RQ_QUEUE_HIGH="high"
+RQ_QUEUE_DEFAULT="default"
+RQ_QUEUE_LOW="low"
+RQ_TIMEOUT_HIGH="1h"
+RQ_TIMEOUT_DEFAULT="48h"
+RQ_TIMEOUT_LOW="1h"
+#RQ_RESULT_TTL=604800 # 7 dias
+RQ_RESULT_TTL=172800 # 2 dias
+RQ_CMD_EXT="cmd"
+RQ_INFO_EXT="info"
+RQ_ERROR_EXT="error"
+RQ_CRON_DAYS=1
+
+# Mail configuration
+MAIL_USERNAME = "#TOCHANGE"
+MAIL_PASSWORD = "#TOCHANGE"
+MAIL_SERVER = "smtp.gmail.com"
+MAIL_PORT = 465
+MAIL_RECEIVER = "#TOCHANGE"
+MAIL_RECEIVER_CC = "#TOCHANGE"
+
+#NEW ADMIN CONFIGURATION
+TNC_UPLOAD_FOLDER = "upload/" # it will data/upload
+QC_SCRIPT = "bin/tncentral_qc_v14.pl"
+QC_ACCESSORY = "base/qc_files/"
+
+# Snapgene library
+TNC_SNAPGENE_LIB_FOLDER="snapgene/"
+TNC_SNAPGENE_BASE_LIBRARY="snapgene_library/"
+TNC_SNAPGENE_CUSTOM="customCommonFeatures"
+TNC_SNAPGENE_COMMON_DNA="CommonFeatures"
+TNC_SNAPGENE_FAVORITES="Exported_Favorite_Features"
+
+
+# external resources to load into tncentral
+TNC_EXTERNAL_ARCHIVE="external/resources.zip"
+LOAD_EXTERNAL = ["integrall"]
+EXTERNAL_IDS = ["integrall.ids"]
+
+# integrall file to download
+INTEGRALL_FOLDER = "integrall"
+INTEGRALL_ZIP = "integrall.zip"
+INTEGRALL_FILES = ["integrall.fasta", "snapgene/"]
+
+
+# global commands
+BLAST_COMMAND="/usr/bin/blastall"
+BLAST_NAMEBASE="tncentral"
+CMD_MAKEBLASTDB="/usr/bin/makeblastdb"
+PERL = "/usr/bin/perl"
+
+# BLAST DB ADDONS
+EXTERNAL_NC_BLAST={"integrall"="external/blast/MobileIntegrons-GC-n499-WithAcessionNumbers.fasta","isfinder"="external/blast/ISfindernt.fa"}
+EXTERNAL_AA_BLAST={"isfinder"="external/blast/ISfinderaa.fa"}
+
+
+# For apache/wsgi configuration
+URL_PREFIX = "/"
+BEHIND_PROXY = 0
+
+# ssl files
+CERT_FILE = "fullchain.pem"
+PRIV_KEY = "privkey.pem"
+
+# For analytics
+USE_GOOGLE_ANALYTICS=0
+USE_RECAPTCHA=0
+USE_FEEDBACK_MAIL=0
+
+RECAPTCHA_SITE_KEY="#TOCHANGE"
+RECAPTCHA_SECRET_KEY="#TOCHANGE"

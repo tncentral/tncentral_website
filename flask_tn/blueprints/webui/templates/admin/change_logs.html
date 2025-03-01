@@ -1,0 +1,79 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+
+<link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+{% endblock styles %}
+{% block title %}Change Logs{% endblock title %}
+
+{% block content %}
+
+<div class="row me-lg-1 file_manager_row align-items-center" style="background-color: bisque;">
+  <div class="col-xl-6 col-lg-6 col-md-6">
+    <h5>
+      <span class="material-symbols-outlined align_middle">
+        assignment
+      </span>
+      <span class="content_header align_middle">
+        Change logs
+      </span>
+    </h5>
+  </div>
+</div>
+<div class="row mt-lg-2 mt-sm-1 me-lg-1 g-0">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table id="tbl_log" class="table table-hover display" style="width:100%">
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Changed at</th>
+            <th>Action</th>
+            <th>Username</th>
+            <th>Category</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.js"></script>
+<script>
+  const base_url = "{{ url_for('admin.home') }}";
+
+  $(document).ready(function () {
+    var table = $('#tbl_log').DataTable({
+      paging: true,
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      order: [1, 'desc'],
+      language: {
+        "lengthMenu": "Show _MENU_ lines per page",
+        "emptyTable": "No records available",
+        "info": "Showing _START_ to _END_ of _TOTAL_ lines",
+      },
+      ajax: base_url + '/log_data/',
+      columns: [
+        { data: 'filename' },
+        { data: 'time_changed' },
+        { data: 'action' },
+        { data: 'user' },
+        { data: 'category' }
+      ],
+      layout: {
+        topStart: 'pageLength',
+        topEnd: 'search',
+        bottomStart: 'info',
+        bottomEnd: 'paging',
+      }
+    });
+  });
+</script>
+{% endblock scripts %}

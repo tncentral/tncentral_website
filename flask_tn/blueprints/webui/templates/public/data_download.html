@@ -1,0 +1,199 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ext/sweetalert2.min.css') }}" />
+{% endblock styles %}
+{% block title %}TnCentral Downloads{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <h5 class="card-header">Snapgene Library for Annotation</h5>
+        <div class="card-body">
+          <div class="card-text">
+            <p>
+              This is a <span class="fw-bold">downloadable working copy</span> of our SnapGene custom library
+              ({{dict_data['dt_custom']}}) that we are building for
+              transposon and insertion sequence annotation. It might contain a number of redundancies. It is composed of
+              <span class="fw-bold">'favorites'</span> (fully annotated and verified features) and <span
+                class="fw-bold">non-favorited features</span> (included to identify in
+              submitted transposons and plasmids but not robustly annotated).
+            </p>
+            <p>
+              There are three download options: 1) the SnapGene © <span class="fw-bold">.frts</span> file containing both
+              <span class="fw-bold">favorited and non-favorited features</span>
+              2) a single file with a <span class="fw-bold">.dna</span> extension containing all our custom features in
+              a concatenated
+              format and 3) a folder containing only the <span class="fw-bold">favorited features</span> each with a
+              .dna extension.
+            </p>
+            <p class="ps-4">
+              1) To install the file with the <span class="fw-bold">.frts</span> extension in SnapGene, first extract
+              the downloaded file, and then
+              copy the <span class="fw-bold">{{dict_data['config_ftrs']}}.ftrs</span> file to the SnapGene folder. In
+              Windows, go to the SNAPGENE folder
+              (APPDATA>Roaming>SnapGene : note this may be a hidden folder) copy the file directly into this folder or
+              replace the current .ftrs file if necessary.<br>
+              <span class="ps-3 fw-bold">NOTE:</span> This method is <span class="fw-bold">NOT Recommended</span> by
+              SnapGene.
+            </p>
+            <p class="ps-4">
+              2) To install the <span class="fw-bold">{{dict_data['config_dna']}}_xx_yy_20xx.dna</span> file with the
+              corresponding date simply import into the
+              user's preexisting <span class="fw-bold">custom features</span>. This contains all our working feature
+              database both favorited and
+              non-favorited. Using this method is probably "safer" and increases the speed of comparisons.
+            </p>
+            <p class="ps-4">
+              3) If the user does not require the entire database, individual favorited features can also be directly
+              imported into the user's preexisting <span class="fw-bold">custom features</span>.
+            </p>
+            <p>
+              The annotation rules we use here are described in the "For Curators" section on the TnCentral left menu.
+              Please consult this document. In addition, the library entry Name and Note fields contain the name of the
+              first associated element in which we found the library entry. These must be changed to the associated
+              element which is being annotated.
+            </p>
+            <p>
+              Please quote: Ross K, Varani AM, Snesrud E, Huang H, Alvarenga DO, Zhang J, Wu C, McGann P, Chandler M.
+              TnCentral: a Prokaryotic Transposable Element Database and Web Portal for Transposon Analysis. mBio. 2021
+              Oct 26;12(5):e0206021. doi: 10.1128/mBio.02060-21. Epub 2021 Sep 14. PMID: 34517763; PMCID: PMC8546635
+            </p>
+            <div class="mt-2">
+              <a href="{{url_for('restapi.download_snap', file=dict_data['ftrs_file'])}}" class="btn btn-info">
+                <span class="material-symbols-outlined" style="vertical-align: middle;">
+                  download
+                </span>
+                <span style="vertical-align: middle;">Download {{dict_data['config_ftrs']}}.ftrs</span>
+              </a>
+              <a href="{{url_for('restapi.download_snap', file=dict_data['dna_file'])}}" class="btn btn-info">
+                <span class="material-symbols-outlined" style="vertical-align: middle;">
+                  download
+                </span>
+                <span style="vertical-align: middle;">Download {{dict_data['config_dna']}}.dna</span>
+              </a>
+
+              <a href="{{url_for('restapi.download_snap', file=dict_data['fav_file'])}}" class="btn btn-info">
+                <span class="material-symbols-outlined" style="vertical-align: middle;">
+                  download
+                </span>
+                <span style="vertical-align: middle;">Download All Favorite Features</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="card">
+        <h5 class="card-header">TnCentral Dataset</h5>
+        <div class="card-body">
+          <div class="card-text">
+            <p>
+              These options are for downloading the entire TnCentral Database. Additional options for downloading
+              different Tn families can be obtained by using the buttons (Tn3, Tn402/In, Compound, Tn554, Tn7 and
+              Integrall) on the TnCentral Homepage or individual examples can be downloaded from the results obtained
+              from a TnCentral Search.
+            </p>
+            <a href="{{url_for('restapi.download_full', file='gb')}}" class="btn btn-success">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">Genbank format</span>
+            </a>
+            <a href="{{url_for('restapi.download_full', file='fa')}}" class="btn btn-success">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">Fasta format</span>
+            </a>
+            <a href="{{url_for('restapi.download_full', file='dna')}}" class="btn btn-success">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">Snapgene format</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-12">
+      <div class="card">
+        <h5 class="card-header">BLAST Databases</h5>
+        <div class="card-body">
+          <div class="card-text">
+            <p>
+              Various options for downloading the BLAST libraries used in the TnCentral BLAST search are provided for
+              both DNA and Protein. They were constructed using the command <a target="_blank"
+                href="https://www.ncbi.nlm.nih.gov/books/NBK569841/">makeblastdb</a> version 2.6.0+.
+            </p>
+            <h6>Nucleotide Databases</h6>
+            <a href="{{url_for('restapi.download_blastdb', type='nc',file='tn')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">Only TnCentral</span>
+            </a>
+            <a href="{{url_for('restapi.download_blastdb', type='nc',file='tn_in')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">TnCentral + Integrall</span>
+            </a>
+            <a href="{{url_for('restapi.download_blastdb', type='nc',file='tn_is')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">TnCentral + ISFinder</span>
+            </a>
+            <a href="{{url_for('restapi.download_blastdb', type='nc',file='tn_in_is')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">TnCentral + Integrall + ISFinder</span>
+            </a>
+            <h6 class="mt-2">Protein Databases</h6>
+            <a href="{{url_for('restapi.download_blastdb', type='prot',file='tn')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">Only TnCentral</span>
+            </a>
+            <a href="{{url_for('restapi.download_blastdb', type='prot', file='tn_is')}}" class="btn btn-warning">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">
+                download
+              </span>
+              <span style="vertical-align: middle;">TnCentral + ISFinder</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+<script src="{{ url_for('static', filename='js/ext/sweetalert2.all.min.js')}}"></script>
+<script type="text/javascript">
+  let base_url = "{{ url_for('webui.index') }}";
+  var elems = document.getElementsByClassName('btn_download');
+  var confirmIt = function (e) {
+    alert('Sorry, this feature is being tested.');
+    e.preventDefault();
+  };
+  for (var i = 0, l = elems.length; i < l; i++) {
+    elems[i].addEventListener('click', confirmIt, false);
+  }
+</script>
+{% endblock scripts %}

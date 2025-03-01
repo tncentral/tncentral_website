@@ -1,0 +1,195 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+{% endblock styles %}
+{% block title %}Annotation Tool{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid g-0">
+  <fieldset class="border">
+    <legend class="float-none w-auto mb-0">
+      <h5>
+        <span style="vertical-align: middle;">&nbsp;</span>
+        <span class="material-symbols-outlined" style="vertical-align: middle;">
+          genetics
+        </span>
+        <span style="vertical-align: middle;">Submission Tool&nbsp;&nbsp;</span>
+      </h5>
+    </legend>
+    <div class="row steps_row">
+      <div class="col-12">
+        <div class="btn-group w-100 p-2">
+          <a class="btn btn-sm btn-outline-secondary active" role="button">
+            Import
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" role="button">
+            General
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" role="button">
+            Repeat Regions
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" role="button">
+            ORFs
+          </a>
+          <a class="btn btn-sm btn-outline-secondary" role="button">
+            Other Features
+          </a>
+        </div>
+      </div>
+    </div>
+    {% if step == 1 %}
+    <div class="row p-2">
+      <div class="col-12">
+        <h5 class="border-bottom">
+          <span class="material-symbols-outlined align_middle">
+            line_start_square
+          </span>
+          <span class="align_middle">From TnCentral</span>
+        </h5>
+      </div>
+    </div>
+    <div class="row p-2 pt-0">
+      <div class="col-auto">
+        <label for="tn_acc" class="col-form-label label-required fw-bold">
+          TnCentral Accession:
+        </label>
+      </div>
+      <div class="col-auto">
+        <input type="text" id="tn_acc" name="tn_acc" class="form-control" required>
+      </div>
+      <div class="col-auto">
+        <a role="button" href="" class="btn btn-warning">Import</a>
+      </div>
+    </div>
+    <div class="row p-2 pt-0">
+      <div class="col-auto">
+        <label for="tn_acc" class="col-form-label label-required fw-bold">
+          Genbank File:
+        </label>
+      </div>
+      <div class="col-auto">
+        <input type="file" id="tn_gb_file" name="tn_gb_file" class="form-control" required>
+      </div>
+      <div class="col-auto">
+        <a role="button" href="" class="btn btn-warning">Import</a>
+      </div>
+    </div>
+    <div class="row p-2 pt-4">
+      <div class="col-12">
+        <h5 class="border-bottom">
+          <span class="material-symbols-outlined align_middle">
+            line_start_square
+          </span>
+          <span class="align_middle">From NCBI Genbank</span>
+        </h5>
+      </div>
+    </div>
+    <div class="row p-2">
+      <div class="col-auto">
+        <label for="gb_acc" class="col-form-label label-required fw-bold">
+          Genbank Accession:
+        </label>
+      </div>
+      <div class="col-auto">
+        <input type="text" id="gb_acc" name="gb_acc" class="form-control" required>
+      </div>
+      <div class="col-auto">
+        <a role="button" href="" class="btn btn-info">Import</a>
+      </div>
+    </div>
+    <div class="row p-2">
+      <div class="col-auto">
+        <label for="gb_file" class="col-form-label label-required fw-bold">
+          Genbank file:
+        </label>
+      </div>
+      <div class="col-auto">
+        <input type="file" id="gb_file" name="gb_file" class="form-control" required>
+      </div>
+      <div class="col-auto">
+        <a role="button" href="" class="btn btn-info">Import</a>
+      </div>
+    </div>
+    {% elif step == 2 %}
+    <form action="{{url_for('webui.form_annotation')}}" method="post">
+      <div class="row p-2">
+        <div class="col-12">
+          <div class="fw-bold border ann_header">
+            &nbsp;<span class="under_dotted" data-bs-toggle="tooltip" data-bs-title="Mobile Genetic Element">MGE</span>
+            Information
+          </div>
+        </div>
+      </div>
+      <div class="row p-0 ps-3 pe-3">
+        <div class="col-4">
+          <label for="name" class="col-form-label label-required fw-bold">
+            <span>MGE</span> Name:
+          </label>
+          <input type="text" id="name" name="name" class="form-control" required>
+          <small class="text-muted d-flex me-1" style="justify-content: end;">e.g., Tn2, Tn1642, IS26, In32,
+            etc.</small>
+        </div>
+        <!-- <div class="col-auto">
+          
+        </div> -->
+        <div class="col-4">
+          <label for="mge_type" class="col-form-label label-required fw-bold">
+            <span>MGE</span> Type:
+          </label>
+          <select class="form-select" aria-label="Default select example" id="mge_type" name="mge_type">
+            <option value="tn">Transposon</option>
+            <option value="is">Insertion Sequence</option>
+            <option value="in">Integron</option>
+          </select>
+        </div>
+        <!-- <div class="col-auto">
+         
+        </div> -->
+        <div class="col-4">
+          <label for="gb_acc" class="col-form-label label-required fw-bold">Genbank Accession:</label>
+          <input type="text" id="gb_acc" name="gb_acc" class="form-control" required>
+        </div>
+        <!-- <div class="col-auto">
+          
+        </div> -->
+      </div>
+      <div class="row p-0 pt-2 ps-3 pe-3">
+        <div class="col-4">
+          <label for="family" class="col-form-label label-required fw-bold">Family:</label>
+          <input type="text" id="family" name="family" class="form-control" required>
+        </div>
+        <div class="col-4">
+          <label for="group" class="col-form-label label-required fw-bold">Group:</label>
+          <input type="text" id="group" name="group" class="form-control" required>
+        </div>
+      </div>
+      <div class="row p-2">
+        <div class="col-12">
+          <div class="fw-bold border ann_header">
+            &nbsp;Host Information
+          </div>
+        </div>
+      </div>
+      <div class="row p-0 ps-3 pe-3 pb-3">
+        <div class="col-4">
+          <label for="family" class="col-form-label label-required fw-bold">NCBI Tax ID:</label>
+          <input type="text" id="tax_id" name="tax_id" class="form-control" required>
+        </div>
+        <div class="col-4">
+          <label for="group" class="col-form-label label-required fw-bold">Host Organism:</label>
+          <input type="text" id="organism" name="organism" class="form-control" required>
+        </div>
+      </div>
+    </form>
+    {% endif%}
+  </fieldset>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
+
+{% endblock %}

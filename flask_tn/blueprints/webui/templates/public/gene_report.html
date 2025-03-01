@@ -1,0 +1,89 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link type="text/css" href="{{ url_for('static', filename='css/feedback.css') }}" rel="stylesheet" />
+{% endblock styles %}
+{% block title %}Gene Report{% endblock title %}
+
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="row">
+    <div class="col-12" style="padding: 0;">
+      <div class="accordion w-100" id="accordionGeneral">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+              aria-expanded="true" aria-controls="collapseOne">
+              General Information
+            </button>
+          </h1>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+            data-bs-parent="#accordionGeneral">
+            <div class="accordion-body">
+
+              <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                  <span class="fw-bold">Gene name:&nbsp;</span>
+                  <span>{{ orf.orf_name }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                  <span class="fw-bold">Gene class:&nbsp;</span>
+                  <span>{{ orf.orf_class|capitalize }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                  <span class="fw-bold">Gene function:&nbsp;</span>
+                  <span>{{ orf.subclass|capitalize }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-xl-1 mt-lg-1">
+    <div class="col-12" style="padding: 0;">
+      <div class="accordion w-100" id="accordionOrf">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingSeven">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven"
+              aria-expanded="true" aria-controls="collapseSeven">
+              Associated Transposable Elements
+            </button>
+          </h1>
+          <div id="collapseSeven" class="accordion-collapse collapse show" aria-labelledby="headingSeven"
+            data-bs-parent="#accordionOrf">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">Accession</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Host</th>
+                      <th scope="col">Country</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for te in orf.entries %}
+                    <tr>
+                      <th scope="row"><a
+                          href="{{url_for('webui.te_report', accession=te.accession)}}">{{te.accession}}</a></th>
+                      <td>{{te.name}}</td>
+                      <td>{{te.organism}}</td>
+                      <td>{{te.country}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

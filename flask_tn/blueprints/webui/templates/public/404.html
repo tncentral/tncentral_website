@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ext/bootstrap.min.css') }}" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cantarell">
+  <title>TnCentral - Page Not Found</title>
+</head>
+
+<body>
+  <!-- Error 404 Template 1 - Bootstrap Brain Component -->
+<div class="button_home mt-2 ms-2">
+  <a class="btn btn-info" href="{{url_for('webui.index')}}">Back to Home</a>
+</div>
+<section>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="text-center">
+          <img class="img-fluid" src="{{url_for('static', filename='images/central_image_error.png')}}" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+
+</html>

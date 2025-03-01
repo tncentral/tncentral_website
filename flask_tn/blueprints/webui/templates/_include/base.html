@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% if use_analytics() %}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TZNSKNL62E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-TZNSKNL62E');
+  </script>
+
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-K26GMN44');</script>
+  <!-- End Google Tag Manager -->
+  {% endif %}
+  {% block recaptcha %}
+  {% endblock recaptcha %}
+  {% block head %}
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css"
+    integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cantarell&display=swap" rel="stylesheet">
+
+  <!-- External -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ext/cantarell.css') }}">
+  <!-- TnCentral CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+
+  <!-- External Icons -->
+  <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" /> -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/ext/material-icons.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ext/material-symbols-outlined.css') }}"> -->
+
+
+  {% block styles %}
+  {% endblock styles %}
+  <title>TnCentral - {% block title %}{% endblock title %}</title>
+  {% endblock head %}
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+  {% if use_analytics() %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K26GMN44"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+  {% endif %}
+  {% block content %}
+  <div class="container g_container">
+    <header class="header_wrapper">
+      <div class="row g-0 row_logo">
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 header_img">
+          <a href="{{url_for('webui.index')}}" class="text-decoration-none">
+            <img alt="logo" class="img_logo img-fluid" src="{{ url_for('static', filename='images/logo_tc.png') }}" />
+          </a>
+        </div>
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 header_text">
+          <a href="{{url_for('webui.index')}}" class="text-decoration-none">
+            <h1 class="text_logo">
+              TnCentral:
+              <span class="text-logo-ext">a Prokaryotic Transposable Element Database</span>
+            </h1>
+          </a>
+        </div>
+      </div>
+    </header>
+    <main class="main_wrapper">
+      <div class="row g-0">
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 g-0 text-center left_main">
+          <div class="nav primary_nav">
+            <a href="{{url_for('webui.index')}}" class="nav-link {{ configure_active(0) }}">Home</a>
+            <a href="{{url_for('webui.tn_search')}}" class="nav-link {{ configure_active(1) }}">TnCentral Search</a>
+            <a href="{{url_for('webui.tn_blast')}}" class="nav-link {{ configure_active(2) }}">TnCentral Blast</a>
+            <a href="{{url_for('webui.tn_finder')}}" class="nav-link {{ configure_active(3) }}">TnFinder Software</a>
+            <a target="_blank" href="https://tncentral.ncc.unesp.br/TnPedia/index.php/TnPedia_Documentation"
+              class="nav-link {{ configure_active(4) }}">TnCentral Docs</a>
+            <a target="_blank" href="https://tncentral.ncc.unesp.br/TnPedia/index.php/Curation_Guidelines"
+              class="nav-link {{ configure_active(5) }}">For Curators</a>
+            <a href="{{url_for('webui.data_download')}}" class="nav-link {{ configure_active(6) }}">Data Download</a>
+            <a target="_blank" href="https://tncentral.ncc.unesp.br/TnPedia/index.php"
+              class="nav-link {{ configure_active(7) }}">TnPedia</a>
+            <a target="_blank" href="https://tncentral.ncc.unesp.br/ISfinder/index.php"
+              class="nav-link {{ configure_active(8) }}">ISfinder mirror site</a>
+            <a href="{{url_for('webui.related_links')}}" class="nav-link {{ configure_active(9) }}">Related Links</a>
+            <a href="{{url_for('webui.feedback')}}" class="nav-link {{ configure_active(10) }}">Feedback</a>
+            <a href="{{url_for('webui.about')}}" class="nav-link {{ configure_active(11) }}">About TnCentral</a>
+
+            <div class="logos">
+              <a target="_blank" href="https://gumc.georgetown.edu/">
+                <img alt="logo" class="img-fluid img-georgetown"
+                  src="{{ url_for('static', filename='images/logo_georgetown.png') }}" />
+              </a><br>
+              <a target="_blank" href="https://www2.unesp.br/portal#!/international">
+                <img alt="logo" class="img-fluid img-unesp"
+                  src="{{ url_for('static', filename='images/unesp-full-center.svg') }}" />
+              </a><br>
+              <a target="_blank" href="https://proteininformationresource.org/">
+                <img alt="logo" class="img-fluid img-pir"
+                  src="{{ url_for('static', filename='images/logo_pir.png') }}" />
+              </a>
+            </div> <!-- <div class="logos -->
+
+            {% if request.url_rule.endpoint == "webui.te_report" and te %}
+            <div class="stick_links text-center">
+              <hr class="remove_when_small">
+              <h6 class="go_to_header">Go to:</h6>
+              <a class="btn btn-default" href="#accordionGeneral">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">General Information</span>
+              </a>
+              {% if check_image(te.accession) == 1%}
+              <a class="btn btn-default" href="#accordionMap">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Map</span>
+              </a>
+              {% endif %}
+
+              {% if te_rep and te_rep|length > 0 %}
+              <a class="btn btn-default" href="#accordionRep">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Terminal Inverted Repeats</span>
+              </a>
+              {% endif %}
+
+              <a class="btn btn-default" href="#accordionSeq">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Sequence</span>
+              </a>
+
+              {% if te_recomb and te_recomb|length > 0 %}
+              <a class="btn btn-default" href="#accordionRecomb">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Recombination Sites</span>
+              </a>
+              {% endif %}
+
+              {% if te_orf and te_orf|length > 0 %}
+              <a class="btn btn-default" href="#accordionOrf">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">ORFs</span>
+              </a>
+              {% endif %}
+
+              {% if te_int and te_int|length > 0 %}
+              <a class="btn btn-default" href="#accordionInternalElements">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Internal TE</span>
+              </a>
+              {% endif %}
+
+              {% if te_rep_int and te_rep_int|length > 0 %}
+              <a class="btn btn-default" href="#accordionInternalRepeats">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">Internal Repeats</span>
+              </a>
+              {% endif %}
+
+              {% if te and te.pubmeds.all()|length > 0 %}
+              <a class="btn btn-default" href="#accordionPubmed">
+                <span class="material-symbols-outlined menu_middle">
+                  link
+                </span>
+                <span class="menu_middle">References</span>
+              </a>
+              {% endif %}
+              <hr class="remove_when_small">
+              <br class="show_when_small">
+              {% if check_file(te.accession, 'fa') %}
+              <a class="btn btn-default" href="{{ url_for('restapi.direct_download', accession=te.accession)}}?ext=fa"
+                id="download_fasta">
+                <span class="material-symbols-outlined menu_middle">
+                  download
+                </span>
+                <span class="menu_middle">Download Fasta</span>
+              </a>
+              {% endif %}
+              {% if check_file(te.accession, 'gb') %}
+              <a class="btn btn-default" href="{{ url_for('restapi.direct_download', accession=te.accession)}}?ext=gb"
+                id="download_genbank">
+                <span class="material-symbols-outlined menu_middle">
+                  download
+                </span>
+                <span class="menu_middle">Download Genbank</span>
+              </a>
+              {% endif %}
+              {% if check_file(te.accession, 'dna') %}
+              <a class="btn btn-default" href="{{ url_for('restapi.direct_download', accession=te.accession)}}?ext=dna"
+                id="download_snapgene">
+                <span class="material-symbols-outlined menu_middle">
+                  download
+                </span>
+                <span class="menu_middle">Download SnapGene</span>
+              </a>
+              {% endif %}
+            </div> <!-- <div class="stick_links text-center"> -->
+            {% endif %}
+          </div>
+        </div> <!-- <div class="col-xl-2 col-lg-2 col-md-2 col-12 g-0"> -->
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 right_main">
+          <!-- <div class="mt-xl-2 ms-xl-2 me-xl-1 mt-lg-2 ms-lg-2 me-lg-1 mt-md-1 ms-md-1 mt-sm-1 ms-sm-1"> -->
+          {% block center_content %} {% endblock %}
+          <!-- </div> -->
+        </div> <!-- <div class="col-xl-10 col-lg-10 col-md-10"> -->
+      </div>
+    </main>
+  </div> <!-- <div class="container g-container"> -->
+  <footer class="container f_container">
+    <div class="row footer_wrapper g-0">
+      <p class="text-center txt_footer">&#169; TnCentral 2024 - All Rights Reserved<br>
+        This website is hosted at the Center for Scientific Computing (NCC/GridUNESP) of the São Paulo State
+        University (UNESP).
+      </p>
+    </div>
+  </footer>
+  {% endblock content %}
+
+  <!-- </div> -->
+  <!-- Optional JavaScript -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+    integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- <script src="{{ url_for('static', filename='js/ext/bootstrap.bundle.min.js')}}"></script> -->
+  <!-- <script src="{{ url_for('static', filename='js/ext/jquery.min.js')}}"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  {% block scripts %}
+  <script type="text/javascript">
+    let base_url = "{{ url_for('webui.index') }}";
+   
+  </script>
+  {% endblock scripts %}
+</body>
+
+</html>

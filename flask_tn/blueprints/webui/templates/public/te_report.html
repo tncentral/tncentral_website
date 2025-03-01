@@ -1,0 +1,606 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/report.css') }}" />
+{% endblock styles %}
+{% block title %}TE Report{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  {% if not te %}
+  <div class="row">
+    <div class="alert alert-danger ms-2 mt-2" role="alert">
+      <h6>There is no report for the provided transposable element.</h6>
+    </div>
+  </div>
+  {% else %}
+  <div class="row">
+    <div class="col-12" style="padding: 0;">
+      <div class="accordion w-100" id="accordionGeneral">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+              aria-expanded="true" aria-controls="collapseOne">
+              <span class="fw-bold">General Information</span>
+            </button>
+          </h1>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+            data-bs-parent="#accordionGeneral">
+            <div class="accordion-body">
+              <div class="row">
+                <!-- <div class="row"> -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Mobile element type:&nbsp;</span>
+                  <span>{{ te.type|capitalize }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Name:&nbsp;</span>
+                  <span>{{ te.name }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Synonyms:&nbsp;</span>
+                  <span>{{ te.synonyms }}</span>
+                </div>
+                <!-- </div> -->
+
+                <!-- <div class="row"> -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Accession:&nbsp;</span>
+                  <span>{{ te.accession }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Family:&nbsp;</span>
+                  <span>{{ te.family }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Group:&nbsp;</span>
+                  <span>{{ te.group }}</span>
+                </div>
+                <!-- </div> -->
+                <!-- <div class="row"> -->
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">First isolate:&nbsp;</span>
+                  <span>{{ te.yes_or_no(te.first_isolate) }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Partial:&nbsp;</span>
+                  <span>{{ te.yes_or_no(te.partial) }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Evidence of transposition:&nbsp;</span>
+                  <span>{{ te.yes_or_no(te.transposition) }}</span>
+                </div>
+              </div>
+              <!-- </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if te.organism %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionHost">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingTwo">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+              aria-expanded="true" aria-controls="collapseTwo">
+              <span class="fw-bold">Host</span>
+            </button>
+          </h1>
+          <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo"
+            data-bs-parent="#accordionHost">
+            <div class="accordion-body">
+
+              <div class="row">
+                {% if te.molecular_source %}
+                <div class="col-xl-3 col-lg-3 col-md-3 col-6">
+                  <span class="fw-bold">Host Organism:&nbsp;</span>
+                  <span>{{ te.organism }}</span>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-6">
+                  <span class="fw-bold">Date of Isolation:&nbsp;</span>
+                  <span>{{ te.date }}</span>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-6">
+                  <span class="fw-bold">Country:&nbsp;</span>
+                  <span>{{ te.country|capitalize }}</span>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-3 col-6">
+                  <span class="fw-bold">Molecular Source:&nbsp;</span>
+                  <span>{{ te.molecular_source }}</span>
+                </div>
+                {% else %}
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Host Organism:&nbsp;</span>
+                  <span>{{ te.organism }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Date of Isolation:&nbsp;</span>
+                  <span>{{ te.date }}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-6">
+                  <span class="fw-bold">Country:&nbsp;</span>
+                  <span>{{ te.country|capitalize }}</span>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% if check_image(te.accession) == 1%}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionMap">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingThree">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+              aria-expanded="true" aria-controls="collapseThree">
+              <span class="fw-bold">Map</span>
+            </button>
+          </h1>
+          <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree"
+            data-bs-parent="#accordionMap">
+            <div class="accordion-body">
+              <div class="row">
+                <a href="{{ url_for('webui.get_image', accession=te.accession) }}" target="_blank">
+                  <img class="img-fluid" src="{{ url_for('webui.get_image', accession=te.accession) }}" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {%endif%}
+  {% if te_rep and te_rep|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionRep">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingFour">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+              aria-expanded="true" aria-controls="collapseFour">
+              <span class="fw-bold">Terminal Inverted Repeats</span>
+            </button>
+          </h1>
+          <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour"
+            data-bs-parent="#accordionRep">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">Name</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Direction</th>
+                      <th scope="col">Length</th>
+                      <th scope="col">Sequence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for rep in te_rep %}
+                    <tr>
+                      <th scope="row">{{rep.name}}</th>
+                      <td>{{rep.fragments[0].start}}-{{rep.fragments[0].end}}</td>
+                      <td>{{rep.fragments[0].strand}}</td>
+                      <td>{{rep.sequence|length}}</td>
+                      <td>{{rep.format_sequence(10)|upper}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionSeq">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingFive">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive"
+              aria-expanded="true" aria-controls="collapseFive">
+              <span class="fw-bold">Sequence</span>
+            </button>
+          </h1>
+          <div id="collapseFive" class="accordion-collapse collapse show" aria-labelledby="headingFive"
+            data-bs-parent="#accordionSeq">
+            <div class="accordion-body">
+              <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <tbody>
+                        <td class="text-uppercase tag_sequence">
+                          <span id="tag_sequence" style="white-space: pre;">
+                          </span>
+                        </td>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if te_recomb and te_recomb|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionRecomb">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingSix">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+              aria-expanded="true" aria-controls="collapseSix">
+              <span class="fw-bold">Recombination Sites</span>
+            </button>
+          </h1>
+          <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix"
+            data-bs-parent="#accordionRecomb">
+            <div class="accordion-body">
+              <!-- <div class="row"> -->
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">Name</th>
+                      <th scope="col">Associated TE</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Orientation</th>
+                      <th scope="col">Length</th>
+                      <th scope="col">Sequence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for rs in te_recomb %}
+                    <tr>
+                      <th scope="row">{{rs.name}}</th>
+                      <th scope="row">{{rs.associated_te}}</th>
+                      <td>
+                        {% for f in rs.fragments %}
+                        {% if loop.index > 1 %}
+                        ,
+                        {% endif %}
+                        {{f.start}}-{{f.end}}
+                        {% endfor %}
+                      </td>
+                      <td>{{rs.fragments[0].strand}}</td>
+                      <td>{{rs.sequence|length}}</td>
+                      <td>{{rs.format_sequence(10)|upper}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div> <!-- <div class="table-responsive"> -->
+            </div> <!-- <div class="accordion-body"> -->
+          </div> <!-- <div id="collapseSix" class="accordion-collapse -->
+        </div> <!-- <div class="accordion-item"> -->
+      </div> <!-- <div class="accordion w-100" -->
+    </div> <!-- <div class="col-12 -->
+  </div>
+  {% endif %}
+  <!-- Writing orfs piece -->
+
+  {% if te_orf and te_orf|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionOrf">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingSeven">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven"
+              aria-expanded="true" aria-controls="collapseSeven">
+              <span class="fw-bold">ORFs</span>
+            </button>
+          </h1>
+          <div id="collapseSeven" class="accordion-collapse collapse show" aria-labelledby="headingSeven"
+            data-bs-parent="#accordionOrf">
+            <div class="accordion-body">
+              <center>
+                <h5>ORF Summary</h5>
+              </center>
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">Name</th>
+                      <th scope="col">Associated TE</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Orientation</th>
+                      <th scope="col">Class</th>
+                      <th scope="col">Subclass</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for orf in te_orf %}
+                    <tr>
+                      <th scope="row"><a href="#{{orf.name}}">{{orf.name}}</a></th>
+                      <td>{{orf.associated_te}}</td>
+                      <td>
+                        {% for f in orf.fragments %}
+                        {% if loop.index > 1 %}
+                        ,
+                        {% endif %}
+                        {{f.start}}-{{f.end}}
+                        {% endfor %}
+                      </td>
+                      <td>{{orf.fragments[0].strand}}</td>
+                      <td>{{orf.orf_class}}</td>
+                      <td>{{orf.subclass}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div> <!--<div class="table-responsive"> -->
+              <center>
+                <h5>ORF Details</h5>
+              </center>
+              {% for orf in te_orf %}
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover" style="margin-bottom: 0px; padding-bottom: 0px; ">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col" id="{{orf.name}}">Gene Name</th>
+                      <th scope="col">Protein Name</th>
+                      <th scope="col">Associated TE</th>
+                      <th scope="col">Gene Length</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Strand</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <th scope="row">{{orf.name}}</th>
+                    <td>{{orf.protein_name}}</td>
+                    <td>{{orf.associated_te}}</td>
+                    <td>{{orf.sequence|length}}</td>
+                    <td>
+                      {% for f in orf.fragments %}
+                      {% if loop.index > 1 %}
+                      ,
+                      {% endif %}
+                      {{f.start}}-{{f.end}}
+                      {% endfor %}
+                    </td>
+                    <td>{{orf.fragments[0].strand}}</td>
+                  </tbody>
+                </table>
+              </div> <!-- div.table-responsive -->
+              <div class="table-responsive" style="margin-left: 20px;">
+                <table class="table table-borderless" style="padding-top: 0px; margin-top: 0px;">
+                  {% if orf.orf_class %}
+                  <tr style="padding: 0; margin: 0;">
+                    <td colspan="2"><b>Class:</b></td>
+                    <td colspan="10">{{orf.orf_class}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.subclass %}
+                  <tr style="padding: 0; margin: 0;">
+                    <td colspan="2"><b>Subclass:</b></td>
+                    <td colspan="10">{{orf.subclass}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.function %}
+                  <tr style="padding: 0; margin: 0;">
+                    <td colspan="2"><b>Function:</b></td>
+                    <td colspan="10">{{orf.function}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.sequence_family %}
+                  <tr>
+                    <td colspan="2"><b>Sequence Family:</b></td>
+                    <td colspan="10">{{orf.sequence_family}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.chemistry %}
+                  <tr>
+                    <td colspan="2"><b>Transposase Chemistry:</b></td>
+                    <td colspan="10">{{orf.chemistry}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.target %}
+                  <tr>
+                    <td colspan="2"><b>Target:</b></td>
+                    <td colspan="10">{{orf.target}}</td>
+                  </tr>
+                  {% endif %}
+                  {% if orf.comment %}
+                  <tr>
+                    <td colspan="2"><b>Comment:</b></td>
+                    <td colspan="10">{{orf.comment}}</td>
+                  </tr>
+                  {% endif %}
+                  <tr>
+                    <td colspan="2"><b>Protein Sequence:</b></td>
+                    <td colspan="10"><code style="color: black;">{{orf.format_sequence(10)}}</code></td>
+                  </tr>
+                </table>
+              </div> <!--<div class="table-responsive"> -->
+              <hr>
+              {% endfor %}
+            </div> <!-- <div class="accordion-body"> -->
+          </div> <!-- div id="collapseSeven" -->
+        </div> <!-- <div class="accordion-item"> -->
+      </div> <!-- <div class="accordion w-100" -->
+    </div> <!-- <div class="col-12 -->
+  </div> <!-- <div class="row"> -->
+  {% endif %}
+
+  <!-- internals TEs-->
+  {% if te_int and te_int|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionInternalElements">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingEight">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight"
+              aria-expanded="true" aria-controls="collapseEight">
+              <span class="fw-bold">Internal Transposable Elements</span>
+            </button>
+          </h1>
+          <div id="collapseEight" class="accordion-collapse collapse show" aria-labelledby="headingEight"
+            data-bs-parent="#accordionInternalElements">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">TnCentral Accession</th>
+                      <th scope="col">TE Name</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Strand</th>
+                      <th scope="col">Length</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for inter in te_int %}
+                    <tr>
+                      <th scope="row">{{inter.accession}}</th>
+                      <th scope="row">{{inter.name}}</th>
+                      <td>{{inter.type}}</td>
+                      <td>
+                        {% set count = namespace(value=0) %}
+                        {% for f in inter.fragments %}
+                        {% set count.value = count.value + (f.end-f.start+1) %}
+                        {% if loop.index > 1 %}
+                        ,
+                        {% endif %}
+                        {{f.start}}-{{f.end}}
+                        {% endfor %}
+                      </td>
+                      <td>{{inter.fragments[0].strand}}</td>
+                      <td>{{count.value}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div> <!-- <div class="table-responsive"> -->
+            </div> <!-- <div class="accordion-body"> -->
+          </div> <!-- <div id="collapseEight" -->
+        </div> <!-- <div class="accordion-item"> -->
+      </div> <!-- <div class="accordion -->
+    </div> <!-- <div class="col-12  -->
+  </div> <!-- <div class="row"> -->
+  {% endif %}
+
+  <!-- internal repeats -->
+  {% if te_rep_int and te_rep_int|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionInternalRepeats">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingNine">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine"
+              aria-expanded="true" aria-controls="collapseNine">
+              Internal Repeat Elements
+            </button>
+          </h1>
+          <div id="collapseNine" class="accordion-collapse collapse show" aria-labelledby="headingNine"
+            data-bs-parent="#accordionInternalRepeats">
+            <div class="accordion-body">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr class="table-info">
+                      <th scope="col">Name</th>
+                      <th scope="col">Associated TE</th>
+                      <th scope="col">Coordinates</th>
+                      <th scope="col">Direction</th>
+                      <th scope="col">Length</th>
+                      <th scope="col">Sequence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for rep in te_rep_int %}
+                    <tr>
+                      <th scope="row">{{rep.name}}</th>
+                      <th scope="row">{{rep.associated_te}}</th>
+                      <td>{{rep.fragments[0].start}}-{{rep.fragments[0].end}}</td>
+                      <td>{{rep.fragments[0].strand}}</td>
+                      <td>{{rep.sequence|length}}</td>
+                      <td>{{rep.format_sequence(10)|upper}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div> <!--<div class="table-responsive">-->
+            </div> <!-- <div class="accordion-body"> -->
+          </div> <!-- <div id="collapseNine" -->
+        </div> <!-- <div class="accordion-item"> -->
+      </div> <!-- <div class="accordion w-100" -->
+    </div> <!-- <div class="col-12 -->
+  </div> <!-- <div class="row"> -->
+  {% endif %}
+
+  <!--pubmeds-->
+  {% if te and te.pubmeds.all()|length > 0 %}
+  <div class="row">
+    <div class="col-12 mt-xl-1 mt-lg-1" style="padding: 0;">
+      <div class="accordion w-100" id="accordionPubmed">
+        <div class="accordion-item">
+          <h1 class="accordion-header" id="headingTen">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen"
+              aria-expanded="true" aria-controls="collapseTen">
+              <span class="fw-bold">References</span>
+            </button>
+          </h1>
+          <div id="collapseTen" class="accordion-collapse collapse show" aria-labelledby="headingTen"
+            data-bs-parent="#accordionPubmed">
+            <div class="accordion-body">
+              {% for pub in te.pubmeds.all() %}
+              <b>{{ loop.index }}.&nbsp;&nbsp;</b>{{ pub.authors }}.&nbsp;
+              <i>{{ pub.title }}. &nbsp;</i>{{ pub.summary }}&nbsp; PubMed ID:
+              <a target="_blank"
+                href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=PubMed&cmd=Retrieve&dopt=Citation&list_uids={{ pub.pubmed_id }}">
+                {{ pub.pubmed_id }}
+              </a>.<br>
+              {% endfor %}
+            </div> <!-- <div class="accordion-body"> -->
+          </div> <!-- <div id="collapseTen" -->
+        </div> <!-- <div class="accordion-item"> -->
+      </div> <!-- <div class="accordion w-100" -->
+    </div> <!-- <div class="col-12 -->
+  </div><!-- <div class="row"> -->
+  {% endif %}
+  {% endif %} <!-- else te_entry == None -->
+  <div class="mb-1"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function () {
+    $.ajax({
+      type: "GET",
+      url: "{{ url_for('webui.get_sequence', accession=te.accession) }}",
+      contentType: "plain/text",
+      dataType: "text",
+      xhrFields: {
+        responseType: 'text'
+      },
+      success: function (data) {
+        const element = document.getElementById("tag_sequence");
+        element.innerHTML = "<code style='color: black;'>" + data + "</code>";
+      },
+
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  });
+</script>
+{% endblock scripts %}

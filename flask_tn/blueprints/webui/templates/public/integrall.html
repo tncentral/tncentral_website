@@ -1,0 +1,211 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ext/sweetalert2.min.css') }}" />
+{% endblock styles %}
+{% block title %}Integrall Table{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="row">
+    <div class="col-9">
+      <h5>
+        <span class="material-symbols-outlined" style="vertical-align: middle;">
+          list
+        </span>
+        <span style="vertical-align: middle;">
+          List of integrons by <a href="http://integrall.bio.ua.pt/" target="_blank">Integrall</a>
+        </span>
+      </h5>
+    </div>
+    <div class="col-3 d-flex">
+      <div style="margin-left: auto;">
+        <a href="{{url_for('restapi.download_external_full', db_name='integrall')}}" class="btn btn-info">Download All
+          Files</a>
+      </div>
+    </div>
+
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive" id="tbl_wrapper">
+        <table id="tbl_integrall" class="table table-hover display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Cassette - Accession</th>
+              <th>Download Files</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+<script src="{{ url_for('static', filename='js/ext/sweetalert2.all.min.js')}}"></script>
+<script>
+
+  let base_url = "{{ url_for('webui.index') }}";
+  function download_row(resource_id, ext) {
+    let params = "database_name=integrall";
+    params += "&resource_id=" + resource_id;
+    params += "&ext=" + ext;
+
+    // first check:
+    let url = base_url + 'api/check_external/';
+    url += "?" + params;
+    $.ajax({
+      type: "GET",
+      url: url,
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      async: false,
+      success: function (data) {
+        if (data.status === "ok") {
+          let url = base_url + 'api/download_external/';
+          url += "?" + params;
+          window.location = url;
+        } else {
+          const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: "btn btn-danger",
+              cancelButton: "btn btn-success"
+            },
+            buttonsStyling: true
+          });
+          swalWithBootstrapButtons.fire({
+            title: "Error!",
+            text: "Sorry, the file requested was not found in our server!",
+            icon: "error"
+          });
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+  function download_selection(dt, ext) {
+    let rows_selected = dt.rows({ selected: true });
+    let params = "ext=" + ext;
+    if (rows_selected.count() > 0) {
+      data = rows_selected.data();
+      params += "&accession=" + data[0].accession;
+      for (i = 1; i < rows_selected.count(); i++) {
+        params += "&accession=" + data[i].accession;
+      }
+    }
+    // first check:
+    let url = base_url + 'api/check_download/';
+    url += "?" + params;
+    $.ajax({
+      type: "GET",
+      url: url,
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      async: false,
+      success: function (data) {
+        if (data.status === "ok") {
+          let url = base_url + 'api/new_download/';
+          url += "?file=" + data.file;
+          window.location = url;
+        } else {
+          const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+              confirmButton: "btn btn-danger",
+              cancelButton: "btn btn-success"
+            },
+            buttonsStyling: true
+          });
+          swalWithBootstrapButtons.fire({
+            title: "Error!",
+            text: "Sorry, the file requested was not found in our server!",
+            icon: "error"
+          });
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+  $.fn.dataTable.ext.buttons.fasta_selected = {
+    text: 'Fasta',
+    action: function (e, dt, node, config) {
+      download_selection(dt, "fa");
+    }
+  };
+  $.fn.dataTable.ext.buttons.snapgene_selected = {
+    text: 'SnapGene',
+    action: function (e, dt, node, config) {
+      download_selection(dt, "dna");
+    }
+  };
+  $(document).ready(function () {
+    var table = $('#tbl_integrall').on('preXhr.dt', function (e, settings, data) {
+      data["database_name"] = "integrall";
+    }).DataTable({
+      paging: true,
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      order: [0, 'asc'],
+      select: {
+        style: 'multi',
+        selector: 'td:first-child'
+      },
+      ajax: base_url + 'api/tbl_ext/',
+      columns: [
+        // { data: 'select' },
+        { data: 'resource_id' },
+        {
+          data: 'btn_fasta',
+          "render": function (data, type, row, meta) {
+            if (type === 'display') {
+              data = "<button class='btn btn-sm btn-outline-secondary btn_fasta'>Fasta</button>&nbsp;";
+              data += "<button class='btn btn-sm btn-outline-primary btn_snap'>Snapgene</button>";
+            }
+            return data;
+          }
+        }
+      ],
+      columnDefs: [
+        { "targets": 1, "orderable": false }
+      ],
+      layout: {
+        topStart: 'pageLength',
+        topEnd: 'search',
+        bottomStart: 'info',
+        bottomEnd: 'paging',
+      }
+    });
+
+    table.on('click', 'button', function (e) {
+      let class_name = e.currentTarget.className;
+      let tbl_row = table.row(e.target.closest('tr'));
+      let resource_id = tbl_row.data().resource_id;
+      let ext = "fa";
+      if (class_name === "btn_snap") {
+        ext = "dna";
+      }
+      download_row(resource_id, ext);
+    });
+    // $('#checkBox').on('click', function () {
+    //   if ($('#checkBox').is(':checked')) {
+    //     table.rows().select();
+    //   }
+    //   else {
+    //     table.rows().deselect();
+    //   }
+    // });
+
+  });
+</script>
+{% endblock scripts %}

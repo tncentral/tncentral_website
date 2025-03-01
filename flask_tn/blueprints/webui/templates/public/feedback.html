@@ -1,0 +1,203 @@
+{% extends "_include/base.html" %}
+{% block recaptcha %}
+{% if use_recaptcha() %}
+<!-- <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script> -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endif %}
+{% endblock recaptcha %}
+
+{% block styles %}
+<link type="text/css" href="{{ url_for('static', filename='css/feedback.css') }}" rel="stylesheet" />
+{% endblock styles %}
+{% block title %}TnCentral Blast{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+    <div style="display: none" id="div_success" class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Your message has been sent!</strong> We appreciate your feedback and we will respond to you as soon as
+        possible.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div style="display: none" id="div_error" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>We could not be able to submit your feedback!</strong> There were some unexpected errors in our server.
+        Please try again later.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div style="display: none" id="error_recaptcha" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Are you a robot?</strong> Please check the option 'I'm not a robot' before submitting this form.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <fieldset class="border p-2">
+        <legend class="float-none w-auto">
+            <h5>Feedback form</h5>
+        </legend>
+        <form id="form_feedback" class="form-inline" action="{{url_for('webui.send_email')}}" method="post">
+            <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="title" class="col-form-label"><b>Title:</b></label>
+                </div>
+                <div class="col-auto">
+                    <select class="form-select" id="title" name="title">
+                        <option value="Prof.">Prof.</option>
+                        <option value="Ing.">Ing.</option>
+                        <option value="Dr.">Dr.</option>
+                        <option value="Mrs.">Mrs.</option>
+                        <option value="Mr.">Mr.</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label for="name" class="col-form-label label-required"><b>First Name:</b></label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="col-auto">
+                    <label for="last_name" class="col-form-label label-required"><b>Last Name:</b></label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                </div>
+            </div>
+            <div class="row mt-1 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="institution" class="col-form-label"><b>Institution:</b></label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="institution" name="institution" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label for="department" class="col-form-label"><b>Department:</b></label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="department" name="department" class="form-control">
+                </div>
+            </div>
+            <div class="row mt-1 g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="email" class="col-form-label label-required"><b>Email:</b></label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="email" name="email" class="form-control" required>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row mt-1 g-3 align-items-center">
+                    <label for="message" class="form-label label-required"><b>Message:</b></label>
+                    <textarea rows="10" class="form-control" id="message" name="message"
+                        placeholder="Type your message here." required></textarea>
+                    {% if use_recaptcha() %}
+                    <div class="g-recaptcha" data-sitekey="6LfxiscpAAAAALdmAi3zDlToc5UtNEfL-PasgwCr"></div>
+                    <br />
+                    {% endif %}
+                    <button id="btn_feedback" class="btn btn-info" type="submit">
+                        <span id="main_text">Send Message</span>
+                        <div id="loading" style="display: none;">
+                            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                            <span role="status">Please wait...</span>
+                        </div>
+                    </button>
+
+                </div>
+            </div>
+        </form>
+        <p class="mt-2 small_text"> * = Required field</p>
+    </fieldset>
+</div> <!-- <div class="container-fluid"> -->
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let base_url = "{{ url_for('webui.index') }}";
+    function reOnSubmit(token) {
+        document.getElementById("form_feedback").submit();
+    }
+    function clear_reset() {
+        $("textarea#txt_sequence").val("");
+    }
+    function clear_form() {
+        $('#title').val('prof.');
+        const inputs = ['name', 'last_name', 'institution', 'department',
+            'email', 'message'];
+        inputs.forEach(input => {
+            $('#' + input).val('');
+        });
+    }
+    function disable_form() {
+        $("#btn_feedback").prop("disabled", true);
+        $("#title").prop("disabled", true);
+        const inputs = ['name', 'last_name', 'institution', 'department',
+            'email', 'message'];
+        inputs.forEach(input => {
+            $('#' + input).prop("disabled", true);
+        });
+    }
+    $("#form_feedback").on('submit', function (e) {
+        e.preventDefault();
+        recaptcha_response = $('#g-recaptcha-response').val()
+        if(recaptcha_response === ""){
+            $("#div_error").hide();
+            $("#div_success").hide();
+            $("#error_recaptcha").show();
+            return false;
+        }else{
+            $("#error_recaptcha").hide();
+        }
+        var formData = {
+            "title": $("#title").val(),
+            "name": $("#name").val(),
+            "last_name": $("#last_name").val(),
+            "institution": $("#institution").val(),
+            "department": $("#department").val(),
+            "email": $("#email").val(),
+            "message": $("#message").val(),
+            "g-recaptcha-response": $('#g-recaptcha-response').val()
+        };
+        $("#main_text").hide();
+        $("#loading").show();
+        disable_form();
+        $.ajax({
+            type: "POST",
+            url: base_url + 'send_email',
+            data: formData,
+            dataType: "json",
+            encode: true,
+            headers: {
+                "X-CSRFToken": "{{ csrf_token() }}",
+            },
+            success: function (data) {
+                if (data.status === "ok") {
+                    $("#div_error").hide();
+                    $("#loading").hide();
+
+                    $("#div_success").show();
+                    $("#main_text").show();
+                    clear_form();
+                }
+                if (data.status === "error") {
+                    $("#div_success").hide();
+                    $("#loading").hide();
+
+                    $("#div_error").show();
+                    $("#main_text").val = $("#main_text").val + "<br>" + data.error;
+                    $("#main_text").show();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $("#div_success").hide();
+                $("#loading").hide();
+
+                $("#div_error").show();
+                $("#main_text").show();
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        });
+    });
+    $(document).ready(function () {
+
+    });
+
+</script>
+{% endblock scripts %}

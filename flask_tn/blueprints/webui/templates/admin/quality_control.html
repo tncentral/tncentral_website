@@ -1,0 +1,343 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+
+{% endblock styles %}
+{% block title %}Quality Control Parameters{% endblock title %}
+
+{% block content %}
+
+<div class="row me-lg-1" style="background-color: bisque;">
+  <h5>
+    <span class="material-icons align_middle">folder</span>
+    <span class="content_header align_middle">
+      Quality Control Files
+    </span>
+  </h5>
+</div>
+<div class="row mt-lg-2">
+  <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12">
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <tbody>
+          <tr>
+            <th scope="row">
+              {{filenames[0]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="File for checking Accessory Genes.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit" href="{{url_for('admin.qc_accessory_gene')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{filenames[1]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="File for checking Toxin/Antitoxin Genes.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit_ta" href="{{url_for('admin.qc_ta_gene')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download_ta">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload_ta">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{filenames[2]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="File for checking Transposases.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit_trans" href="{{url_for('admin.qc_transposase')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download_trans">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload_trans">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{filenames[3]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="List of ARO terms used to categorize all entries in CARD.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit_aroc"
+                href="{{url_for('admin.qc_card_categories')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download_aroc">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload_aroc">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{filenames[4]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="Contains a list of ARO tagging of GenBank accessions stored in CARD.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit_aroi" href="{{url_for('admin.qc_card_index')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download_aroi">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload_aroi">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              {{filenames[5]}}&nbsp;&nbsp;
+              <button type="button" class="btn-help" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                data-bs-title="File for checking Heavy Metal Resistance genes.">
+                <span>?</span>
+              </button>
+            </th>
+            <td class="d-flex gap-1">
+              <a class="btn btn-outline-primary btn-sm" id="btn_edit_metal"
+                href="{{url_for('admin.qc_metal_targets')}}">
+                <span class="material-symbols-outlined align_middle">
+                  edit_document
+                </span>
+                <span class="align_middle">
+                  Edit
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_download_metal">
+                <span class="material-symbols-outlined align_middle">
+                  file_save
+                </span>
+                <span class="align_middle">
+                  Download
+                </span>
+              </a>
+              <a class="btn btn-outline-primary btn-sm" id="btn_upload_metal">
+                <span class="material-symbols-outlined align_middle">
+                  upload_file
+                </span>
+                <span class="align_middle">Upload</span>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!-- table responsive -->
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  let base_url = "{{ url_for('admin.home') }}";
+  let csrf_token = "{{ csrf_token() }}";
+  let inputfile;
+  let swal_upload = Swal.mixin();
+
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  // $(document).ready(function () {
+
+  // });
+  function upload_file(qc_filename) {
+    swal_upload.fire({
+      title: "Select a file",
+      showCancelButton: true,
+      confirmButtonText: 'Upload',
+      input: "file",
+      inputAttributes: {
+        "aria-label": "Upload your File"
+      }
+    }).then((file) => {
+      if (file.value) {
+        let formData = new FormData();
+        let new_file = $('.swal2-file')[0].files[0];
+        formData.append("fileToUpload", new_file);
+        formData.append("csrf_token", csrf_token);
+        formData.append("qc_filename", qc_filename);
+        $.ajax({
+          type: "POST",
+          url: base_url + "upload_qc",
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            if (data.status === "ok") {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "File successfully uploaded.",
+                showConfirmButton: true,
+                timer: 2500
+              });
+            } else {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "Something went wrong.",
+                html: data.error,
+                showConfirmButton: false
+              });
+            }
+
+          },
+          error: function (data) {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Something went wrong. Please contact admin.",
+              text: data.error,
+              showConfirmButton: false,
+              timer: 2500
+            });
+          }
+        });
+      }
+    });
+  };
+  function download_file(filename) {
+    let url = base_url + "download_qc_file/" + filename;
+    window.location = url;
+  }
+  $('#btn_upload').on('click', function () {
+    upload_file("{{filenames[0]}}");
+  });
+  $('#btn_download').on('click', function () {
+    download_file("{{filenames[0]}}");
+  });
+
+  $('#btn_upload_ta').on('click', function () {
+    upload_file("{{filenames[1]}}");
+  });
+  $('#btn_download_ta').on('click', function () {
+    download_file("{{filenames[1]}}");
+  });
+
+  $('#btn_upload_trans').on('click', function () {
+    upload_file("{{filenames[2]}}");
+  });
+  $('#btn_download_trans').on('click', function () {
+    download_file("{{filenames[2]}}");
+  });
+
+  $('#btn_upload_aroc').on('click', function () {
+    upload_file("{{filenames[3]}}");
+  });
+  $('#btn_download_aroc').on('click', function () {
+    download_file("{{filenames[3]}}");
+  });
+
+  $('#btn_upload_aroi').on('click', function () {
+    upload_file("{{filenames[4]}}");
+  });
+  $('#btn_download_aroi').on('click', function () {
+    download_file("{{filenames[4]}}");
+  });
+
+  $('#btn_upload_metal').on('click', function () {
+    upload_file("{{filenames[5]}}");
+  });
+  $('#btn_download_metal').on('click', function () {
+    download_file("{{filenames[5]}}");
+  });
+
+</script>
+{% endblock scripts %}

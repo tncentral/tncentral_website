@@ -1,0 +1,441 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+{% endblock styles %}
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+<div class="row me-lg-1" style="background-color: bisque;">
+  <h5>
+    <span class="material-icons align_middle">folder</span>
+    <span class="content_header align_middle">
+      File Manager
+    </span>
+  </h5>
+</div>
+<div class="row mt-2 file_manager_row">
+  <div class="col-12">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-primary btn-md btn-sm" id="btn_upload">
+        <span class="align_middle material-icons">cloud_upload</span>
+        <span class="align_middle">Upload one or more files</span>
+      </button>
+
+      <form action="{{ url_for('admin.download_all') }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden" name="in_prod" value="0" />
+        <button type="submit" class="btn btn-info btn-md btn-sm ms-2" id="btn_download_all">
+          <span class="material-icons align_middle">cloud_download</span>
+          <span class="align_middle">Download all files</span>
+        </button>
+      </form>
+      <button type="button" class="btn btn-danger btn-md btn-sm ms-2" id="btn_delete_all">
+        <span class="align_middle material-icons">delete_forever</span>
+        <span class="align_middle">Delete all files</span>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="row mt-lg-3 mt-md-2 me-lg-1 file_manager_row" style="background-color: bisque;" id="header_table">
+  <div class="col-xl-6 col-lg-6 col-md-6">
+    <h5>
+      <span class="material-icons align_middle">
+        format_list_bulleted
+      </span>
+      <span class="content_header align_middle">
+        User Uploaded Genbanks
+      </span>
+    </h5>
+  </div>
+  <div class="col-xl-3 col-lg-2 col-md-2"></div>
+  <div class="col-xl-3 col-lg-4 col-md-4 gx-0">
+    <div class="input-group">
+      <span class="input-group-text" id="search_icon">
+        <span class="material-symbols-outlined">
+          search
+        </span>
+      </span>
+      <input id="global_filter" type="text" class="form-control" placeholder="Search entries" aria-label="Username"
+        aria-describedby="search_icon">
+    </div>
+  </div>
+</div>
+<div class="row mt-2" id="div_table">
+  <div class="col-md-12">
+    <div class="table-responsive">
+      <table id="tbl_genbank" class="table responsive nowrap">
+        <thead>
+          <tr>
+            <th class="select-checkbox"><input id="checkBox" name="checkBox" type="checkbox"></th>
+            <th>Accession</th>
+            <th>Upload Date</th>
+            <th>File Size (kb)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- modal for genbank upload -->
+<div class="modal" id="modal_upload" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Genbank Upload Dialog</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Form -->
+            <form class="ms-2 mb-2 align-items-center" action="{{ url_for('admin.upload_to_db') }}" method="post"
+              enctype="multipart/form-data" id="upload_form">
+              <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}" />
+              <div class="row">
+                <input type="file" class="form-control-file" id="genbank_file" name="genbank_file[]" multiple>
+                <p class="text-danger" style="display:none;" id="upload_error">
+                  Please select a file to upload.
+                </p>
+              </div>
+              <div class="row mt-2">
+                <button class="btn btn-primary w-100" type="submit">Upload file(s)</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+<script>
+  let base_url = "{{ url_for('admin.home') }}";
+  function download_selection(db, ext, dt) {
+    let ext_param = "ext=" + ext;
+    let rows_selected = dt.rows({ selected: true });
+    if (rows_selected.count() === 0) {
+      alert('Please select at least one file to download.');
+      return 0;
+    }
+    let url = base_url;
+    let check_url = base_url;
+    const formData = {
+      'csrf_token': "{{ csrf_token() }}"
+    }
+    if (rows_selected.count() === 1) {
+      url += 'download/' + db + '/';
+      url += rows_selected.data()[0].accession;
+      url += "?" + ext_param;
+      check_url += 'check_download/' + db + '?accession=';
+      check_url += rows_selected.data()[0].accession;
+      check_url += "&" + ext_param;
+    } else {
+      url += 'bulk/' + db;
+      check_url += 'check_download/' + db;
+
+      data = rows_selected.data();
+      url += "?" + ext_param;
+      check_url += "?" + ext_param;
+      for (i = 0; i < rows_selected.count(); i++) {
+        url += "&accession=" + data[i].accession;
+        check_url += "&accession=" + data[i].accession;
+      }
+    }
+    $.ajax({
+      type: "POST",
+      url: check_url,
+      data: formData,
+      dataType: "json",
+      encode: true,
+      success: function (data) {
+        if (data.status === "ok") {
+          window.location = url;
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: data.error,
+            showConfirmButton: false
+          });
+        }
+      },
+      error: function (data) {
+        Swal.fire({
+          position: "center",
+          icon: "danger",
+          title: "Something went wrong. Please contact admin.",
+          text: data.error,
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
+    });
+  }
+  $.fn.dataTable.ext.buttons.fasta_selected = {
+    text: '<b>Fasta</b>',
+    className: 'btn btn-info',
+    action: function (e, dt, node, config) {
+      let db = "u";
+      let ext = "fa";
+      download_selection(db, ext, dt);
+    }
+  };
+
+  $.fn.dataTable.ext.buttons.genbank_selected = {
+    text: '<b>Genbank</b>',
+    className: 'btn btn-info',
+    action: function (e, dt, node, config) {
+      let db = "u";
+      let ext = "gb";
+      download_selection(db, ext, dt);
+    }
+  };
+  $.fn.dataTable.ext.buttons.snapgene_selected = {
+    text: '<b>Snapgene</b>',
+    className: 'btn btn-info',
+    action: function (e, dt, node, config) {
+      let db = "u";
+      let ext = "dna";
+      download_selection(db, ext, dt);
+    }
+  };
+  $(document).ready(function () {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: true
+    });
+    let table = $('#tbl_genbank').DataTable({
+      paging: true,
+      processing: true,
+      responsive: true,
+      select: {
+        style: 'multi',
+        selector: 'td:first-child'
+      },
+      order: [2, 'desc'],
+      ajax: base_url + '/user_gb/',
+      columns: [
+        { data: 'select' },
+        {
+          data: 'accession'
+        },
+        { data: 'upload_time' },
+        { data: 'filesize' },
+        {
+          data: function (data, type, row, meta) {
+            return "<input type=\"button\" class=\"btn btn-sm btn-outline-primary btn-edit\" id=\"n-" + meta.row +
+              "\" value=\"Edit\"/>&nbsp;<input type=\"button\" class=\"btn btn-sm btn-outline-danger btn-delete\" id=\"s-" +
+              meta.row + "\" value=\"Delete\"/>";
+          }
+        }
+      ],
+      "columnDefs": [
+        {
+          targets: 0,
+          orderable: false,
+          className: 'select-checkbox'
+        }
+      ],
+      layout: {
+        topStart: 'buttons',
+        topEnd: 'pageLength',
+        bottomStart: 'info',
+        bottomEnd: 'paging',
+      },
+      buttons: {
+        name: 'primary',
+        buttons: [
+          {
+            extend: 'spacer',
+            style: 'empty',
+            text: '<b class="align_middle">Download as:&nbsp;&nbsp;</b>'
+          },
+          'fasta_selected', 'genbank_selected', 'snapgene_selected'
+        ]
+      }
+    });
+    table.on('draw', function () {
+      if (table.data().any()) {
+        $("#div_table").show();
+        $("#header_table").show();
+      } else {
+        $("#div_table").hide();
+        $("#header_table").hide();
+      }
+    });
+    $('#tbl_genbank tbody').on('click', '.btn-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      // redirect to page where we can edit the genbank
+      var url = base_url + 'edit/u/' + data.accession;
+      window.location = url;
+    });
+    $('#tbl_genbank tbody').on('click', '.btn-delete', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this genbank?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let accession = data.accession;
+          let in_prod = '0';
+          let csrf = $("#csrf_token").val();
+          console.log('before delete');
+          delete_genbank(accession, in_prod, csrf);
+          swalWithBootstrapButtons.fire({
+            title: "Deleted!",
+            text: "Genbank '" + accession + "' has been deleted.",
+            icon: "success"
+          });
+        }
+      });
+    });
+
+    function delete_genbank(accession, in_prod, csrf) {
+      const url = base_url + 'genbank/' + accession;
+      const formData = {
+        'in_prod': in_prod.toString(),
+        'csrf_token': csrf
+      }
+      $.ajax({
+        type: "DELETE",
+        url: url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        async: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            table.ajax.reload();
+          }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+      });
+    }
+    $('#checkBox').on('click', function () {
+      console.log('antes');
+      console.log(table.rows({ selected: true }).count());
+      if ($('#checkBox').is(':checked')) {
+        table.rows().select();
+      }
+      else {
+        table.rows().deselect();
+      }
+    });
+    $("#btn_upload").on('click', function () {
+      $("#modal_upload").modal('show');
+    });
+    $("#btn_delete_all").on('click', function () {
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete all uploaded genbanks?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const url = base_url + 'delete_all';
+          const formData = {
+            'csrf_token': $("#csrf_token").val()
+          }
+          $.ajax({
+            type: "DELETE",
+            url: url,
+            data: formData,
+            dataType: "json",
+            encode: true,
+            async: false,
+            success: function (data) {
+              if (data.status === "ok") {
+                table.ajax.reload();
+                swalWithBootstrapButtons.fire({
+                  title: "Deleted!",
+                  text: "All Genbank files have been deleted.",
+                  icon: "success"
+                });
+              }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+              console.log(textStatus);
+              console.log(errorThrown);
+            }
+          });
+
+        }
+      });
+    });
+    $('#upload_form').submit(function (e) {
+      const url = base_url + 'upload_to_db';
+      const formData = new FormData(this);
+      e.preventDefault(); // dont submit multiple times
+      if ($("#genbank_file").val() === '') {
+        $("#upload_error").show();
+      } else {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: formData,
+          dataType: "json",
+          async: false,
+          processData: false,
+          contentType: false,
+          success: function (data) {
+            if (data.status === "ok") {
+              swalWithBootstrapButtons.fire({
+                title: "Uploaded!",
+                text: data.count + "' file(s) uploaded.",
+                icon: "success"
+              });
+              table.ajax.reload();
+              $("#genbank_file").val = "";
+              $("#modal_upload").modal('hide');
+            } else {
+              let filenames = $("#genbank_file").prop('files');
+              let error_text = "";
+              for (let i = 0; i < filenames.length; i = i + 1) {
+                filename = filenames[i].name;
+                return_status = data[filename];
+                if (return_status !== "ok") {
+                  error_text += filename + " - " + return_status + "\n";
+                }
+              }
+              swalWithBootstrapButtons.fire({
+                title: "The following files could not be uploaded:",
+                text: error_text,
+                icon: "error"
+              });
+
+            }
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+      }
+    });
+    $('#global_filter').on('input', function (e) {
+      let text = $('#global_filter').val();
+      table.search(text).draw();
+    });
+
+  });
+</script>
+{% endblock scripts %}

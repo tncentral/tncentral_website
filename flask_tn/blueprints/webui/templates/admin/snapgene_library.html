@@ -1,0 +1,197 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+{% endblock styles %}
+{% block title %}Snapgene Library{% endblock title %}
+
+{% block content %}
+
+<div class="row me-lg-1" style="background-color: bisque;">
+  <h5>
+    <span class="material-icons align_middle">folder</span>
+    <span class="content_header align_middle">
+      Custom Library
+    </span>
+  </h5>
+</div>
+<div class="row mt-2">
+  <!-- <input type="hidden" class="form-control-file" id="custom_file" name="custom_file"> -->
+  <div class="col-12">
+    <a href="{{url_for('restapi.download_snap', file=custom)}}">{{custom}}</a>
+    <a class="btn btn-primary" id="btn_update">Update file</a>
+  </div>
+</div>
+<div class="row mt-2">
+  <!-- <input type="hidden" class="form-control-file" id="custom_file" name="custom_file"> -->
+  <div class="col-12">
+    <a href="{{url_for('restapi.download_snap', file=favorites)}}">{{favorites}}</a>
+    <a class="btn btn-primary" id="btn_update_favorites">Update file</a>
+  </div>
+</div>
+
+<!-- modal for custom upload -->
+<div class="modal" id="modal_upload" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Custom Library Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Form -->
+            <form class="ms-2 mb-2 align-items-center" action="{{ url_for('admin.upload_custom') }}" method="post"
+              enctype="multipart/form-data" id="upload_form">
+              <input type="hidden" id="csrf_token" name="csrf_token" value="{{ csrf_token() }}" />
+              <div class="row">
+                <input type="file" class="form-control-file" id="custom_file" name="custom_file">
+                <p class="text-danger" style="display:none;" id="upload_error">
+                  Please select a file to upload.
+                </p>
+              </div>
+              <div class="row mt-2">
+                <button class="btn btn-primary w-100" type="submit">Upload file</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for favorites upload -->
+<div class="modal" id="modal_upload_favorites" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Favorites Library Update</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Form -->
+            <form class="ms-2 mb-2 align-items-center" action="{{ url_for('admin.upload_favorites') }}" method="post"
+              enctype="multipart/form-data" id="upload_form_favorites">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <div class="row">
+                <input type="file" class="form-control-file" id="favorites_file" name="favorites_file">
+                <p class="text-danger" style="display:none;" id="upload_error_favorites">
+                  Please select a file to upload.
+                </p>
+              </div>
+              <div class="row mt-2">
+                <button class="btn btn-primary w-100" type="submit">Upload file</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  let base_url = "{{ url_for('admin.home') }}";
+  $(document).ready(function () {
+    const swalWithBootstrapButtons = Swal.mixin({
+      customClass: {
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-danger"
+      },
+      buttonsStyling: true
+    });
+
+    $("#btn_update").on('click', function () {
+      $("#modal_upload").modal('show');
+    });
+    $("#btn_update_favorites").on('click', function () {
+      $("#modal_upload_favorites").modal('show');
+    });
+    $('#upload_form').submit(function (e) {
+      const url = base_url + 'upload_custom';
+      const formData = new FormData(this);
+      e.preventDefault(); // dont submit multiple times
+      if ($("#custom_file").val() === '') {
+        $("#upload_error").show();
+      } else {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: formData,
+          dataType: "json",
+          async: false,
+          processData: false,
+          contentType: false,
+          success: function (data) {
+            let filenames = $("#custom_file").prop('files');
+            if (data.status === "ok") {
+              swalWithBootstrapButtons.fire({
+                title: "Uploaded!",
+                text: "File "+filenames[0].name+" uploaded successfully.",
+                icon: "success"
+              });
+              $("#custom_file").val = "";
+              $("#modal_upload").modal('hide');
+            } else {
+              swalWithBootstrapButtons.fire({
+                title: "The file "+filenames[0].name+" could not be uploaded.",
+                text: data.error,
+                icon: "error"
+              });
+            }
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+      }
+    });
+    $('#upload_form_favorites').submit(function (e) {
+      const url = base_url + 'upload_favorites';
+      const formData = new FormData(this);
+      e.preventDefault(); // dont submit multiple times
+      if ($("#favorites_file").val() === '') {
+        $("#upload_error_favorites").show();
+      } else {
+        $.ajax({
+          type: "POST",
+          url: url,
+          data: formData,
+          dataType: "json",
+          async: false,
+          processData: false,
+          contentType: false,
+          success: function (data) {
+            let filenames = $("#favorites_file").prop('files');
+            if (data.status === "ok") {
+              swalWithBootstrapButtons.fire({
+                title: "Uploaded!",
+                text: "File "+filenames[0].name+" uploaded successfully.",
+                icon: "success"
+              });
+              $("#favorites_file").val = "";
+              $("#modal_upload_favorites").modal('hide');
+            } else {
+              swalWithBootstrapButtons.fire({
+                title: "The file "+filenames[0].name+" could not be uploaded.",
+                text: data.error,
+                icon: "error"
+              });
+            }
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+      }
+    });
+  });
+</script>
+{% endblock scripts %}

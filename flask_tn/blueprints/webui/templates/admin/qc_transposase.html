@@ -1,0 +1,387 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+
+<link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+{% endblock styles %}
+{% block title %}{{qc_name}}{% endblock title %}
+
+{% block content %}
+
+<div class="row me-lg-1 file_manager_row align-items-center" style="background-color: bisque;">
+  <div class="col-xl-6 col-lg-6 col-md-6">
+    <h5>
+      <span class="material-symbols-outlined align_middle">
+        article
+      </span>
+      <span class="content_header align_middle">
+        {{qc_name}}
+      </span>
+    </h5>
+  </div>
+  <div class="col-xl-3 col-lg-2 col-md-2"></div>
+  <div class="col-xl-3 col-lg-4 col-md-4 gx-0">
+    <div class="input-group">
+      <span class="input-group-text" id="search_icon">
+        <span class="material-symbols-outlined">
+          search
+        </span>
+      </span>
+      <input id="global_filter" type="text" class="form-control" placeholder="Search lines" aria-label="Username"
+        aria-describedby="search_icon">
+    </div>
+  </div>
+</div>
+<div class="row mt-lg-2 mt-sm-1 me-lg-1 g-0">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table id="tbl_file" class="table table-hover display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Line</th>
+            <th>Class</th>
+            <th>Gene</th>
+            <th>Product</th>
+            <th>Sequence Family</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- modal modal_edit_line -->
+<div class="modal" id="modal_edit_line" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <span class="material-symbols-outlined align_middle">
+            edit_document
+          </span>
+          <span class="align_middle">
+            {{qc_name}} - Line Editing
+          </span>
+
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form  -->
+          <form id="form_line_edit" class="ms-2 mb-2 align-items-center" method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-1">
+                <label for="line_number" class="form-label"><strong>Line</strong></label>
+                <input type="text" class="form-control" id="line_number" name="line_number" disabled />
+              </div>
+              <div class="col-5">
+                <label for="gene_class" class="form-label"><strong>Class</strong></label>
+                <input type="text" class="form-control" id="gene_class" name="gene_class" />
+              </div>
+              <div class="col-6">
+                <label for="gene" class="form-label"><strong>Gene</strong></label>
+                <input type="text" class="form-control" id="gene" name="gene" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <label for="product" class="form-label"><strong>Product</strong></label>
+                <input type="text" class="form-control" id="product" name="product" />
+              </div>
+              <div class="col-6">
+                <label for="sequence_family" class="form-label"><strong>Sequence Family</strong></label>
+                <input type="text" class="form-control" id="sequence_family" name="sequence_family" />
+              </div>
+            </div>
+            <hr>
+            <div class="row d-flex">
+              <button class="btn btn-primary btn-sm ms-auto" type="submit">Save Line</button>
+            </div>
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_edit_file"  -->
+
+<!-- modal modal_edit_line -->
+<div class="modal" id="modal_add_line" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <span class="material-symbols-outlined align_middle">
+            note_add
+          </span>
+          <span class="align_middle">
+            {{qc_name}} - Adding Line
+          </span>
+
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form  -->
+          <form id="form_add_line" class="ms-2 mb-2 align-items-center" method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-6">
+                <label for="add_gene_class" class="form-label"><strong>Class</strong></label>
+                <input type="text" class="form-control" id="add_gene_class" name="gene_class" required />
+              </div>
+              <div class="col-6">
+                <label for="add_gene" class="form-label"><strong>Gene</strong></label>
+                <input type="text" class="form-control" id="add_gene" name="gene" required />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6">
+                <label for="add_product" class="form-label"><strong>Product</strong></label>
+                <input type="text" class="form-control" id="add_product" name="product" required />
+              </div>
+              <div class="col-6">
+                <label for="add_sequence_family" class="form-label"><strong>Sequence Family</strong></label>
+                <input type="text" class="form-control" id="add_sequence_family" name="sequence_family" />
+              </div>
+            </div>
+            <hr>
+            <div class="row d-flex">
+              <button class="btn btn-primary btn-sm ms-auto" type="submit">Add Line</button>
+            </div>
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_edit_file"  -->
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.js"></script>
+<script>
+  const base_url = "{{ url_for('admin.home') }}";
+  const qc_file = "{{qc_name}}";
+
+  $.fn.dataTable.ext.buttons.create_new = {
+    className: 'btn btn-md btn-success',
+    text: '<span class="material-symbols-outlined align_middle">add_circle</span><span class="align_middle">&nbsp;Add New Line</span>',
+    action: function (e, dt, node, config) {
+      $("#modal_add_line").modal('show');
+    }
+  };
+
+  $(document).ready(function () {
+    var table = $('#tbl_file').DataTable({
+      paging: true,
+      processing: true,
+      serverSide: true,
+      responsive: true,
+      order: [0, 'asc'],
+      language: {
+        "lengthMenu": "Show _MENU_ lines per page",
+        "emptyTable": "No records available",
+        "info": "Showing _START_ to _END_ of _TOTAL_ lines",
+      },
+      ajax: base_url + '/qc_file/' + qc_file,
+      columns: [
+        { data: 'line_number' },
+        { data: 'gene_class' },
+        { data: 'gene' },
+        { data: 'product' },
+        { data: 'sequence_family' },
+        {
+          data: function (data, type, row, meta) {
+            return "<input type=\"button\" class=\"btn btn-sm btn-outline-primary btn-edit\" id=\"n-" + meta.row +
+              "\" value=\"Edit\"/>&nbsp;<input type=\"button\" class=\"btn btn-sm btn-outline-danger btn-delete\" id=\"s-" +
+              meta.row + "\" value=\"Delete\"/>";
+          }
+        }
+      ],
+      columnDefs: [
+        {
+          targets: 0,
+          className: 'dt-body-right'
+        }
+      ],
+      layout: {
+        topStart: 'buttons',
+        topEnd: 'pageLength',
+        bottomStart: 'info',
+        bottomEnd: 'paging',
+      },
+      buttons: ['create_new']
+    });
+    $('#tbl_file tbody').on('click', '.btn-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      $("#line_number").val(data.line_number);
+      $("#gene_class").val(data.gene_class);
+      $("#gene").val(data.gene);
+      $("#product").val(data.product);
+      $("#sequence_family").val(data.sequence_family);
+
+      $("#modal_edit_line").modal('show');
+    });
+    $('#form_line_edit').on('submit', (function (e) {
+      e.preventDefault();
+      let url = base_url + '/qc_file/' + qc_file;
+      let line = $("#gene_class").val();
+      line += "\t" + $("#gene").val();
+      line += "\t" + $("#product").val();
+      line += "\t" + $("#sequence_family").val() + "\n";
+      var formData = {
+        csrf_token: "{{ csrf_token() }}",
+        line: line,
+        line_number: $("#line_number").val()
+      };
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        async: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Line successfully updated.",
+              showConfirmButton: true
+            });
+            $("#modal_edit_line").modal('hide');
+            table.draw();
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: data.error,
+              showConfirmButton: true
+            });
+          }
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+          alert(new_url);
+        }
+      });
+    }));
+    $('#form_add_line').on('submit', (function (e) {
+      e.preventDefault();
+      let url = base_url + '/qc_file/' + qc_file;
+      let line = $("#add_gene_class").val();
+      line += "\t" + $("#add_gene").val();
+      line += "\t" + $("#add_product").val();
+      line += "\t" + $("#add_sequence_family").val() + "\n";
+      if ($("#add_gene_class").val() === "" &&
+        $("#add_gene").val() === "" && $("#add_product").val() === "" &&
+        $("#add_sequence_family").val() === "") {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "All fields are empty.",
+          showConfirmButton: true
+        });
+        return false;
+      }
+      var formData = {
+        csrf_token: "{{ csrf_token() }}",
+        line: line
+      };
+
+      $.ajax({
+        type: "PUT",
+        url: url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        async: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Line successfully appended to the file.",
+              showConfirmButton: true
+            });
+            $("#modal_add_line").modal('hide');
+            table.draw();
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: data.error,
+              showConfirmButton: true
+            });
+          }
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+          alert(new_url);
+        }
+      });
+    }));
+    $('#tbl_file tbody').on('click', '.btn-delete', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      let url = base_url + '/qc_file/' + qc_file;
+      let line_number = data.line_number;
+      let formData = {
+        csrf_token: "{{ csrf_token() }}",
+        line_number: line_number
+      }
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        buttonsStyling: true
+      });
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this line?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            type: "DELETE",
+            url: url,
+            data: formData,
+            dataType: "json",
+            encode: true,
+            async: false,
+            success: function (data) {
+              if (data.status === "ok") {
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: "Line removed.",
+                  showConfirmButton: true
+                });
+                table.ajax.reload();
+              }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+              console.log(textStatus);
+              console.log(errorThrown);
+            }
+          });
+        }
+      });
+    });
+    $('#global_filter').on('input', function (e) {
+      let text = $('#global_filter').val();
+      table.search(text).draw();
+    });
+  });
+</script>
+{% endblock scripts %}

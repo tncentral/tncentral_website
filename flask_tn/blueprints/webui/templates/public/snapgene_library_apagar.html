@@ -1,0 +1,53 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ext/sweetalert2.min.css') }}" />
+{% endblock styles %}
+{% block title %}Integrall Table{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="row">
+    <div class="col-9">
+      <h5>
+        <span class="material-symbols-outlined" style="vertical-align: middle;">
+          list
+        </span>
+        <span style="vertical-align: middle;">
+          List of integrons by <a href="http://integrall.bio.ua.pt/" target="_blank">Integrall</a>
+        </span>
+      </h5>
+    </div>
+    <div class="col-3 d-flex">
+      <div style="margin-left: auto;">
+        <a href="{{url_for('restapi.download_external_full', db_name='integrall')}}" class="btn btn-info">Download All Files</a>
+      </div>
+    </div>
+
+  </div>
+  <hr>
+  <div class="row">
+    <div class="col-12">
+      <div class="table-responsive" id="tbl_wrapper">
+        <table id="tbl_integrall" class="table table-hover display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Cassette - Accession</th>
+              <th>Download Files</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+<script src="{{ url_for('static', filename='js/ext/sweetalert2.all.min.js')}}"></script>
+<script>
+  let base_url = "{{ url_for('webui.index') }}";
+</script>
+{% endblock scripts %}

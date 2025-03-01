@@ -1,0 +1,16 @@
+Class	Gene	Product	SequenceFamily
+Transposase	insAB	InsAB	
+Transposase	insB	InsB	
+Transposase	istA	IstA	
+Transposase	orfAB	OrfAB	
+Transposase	tniA	TniA	
+Transposase	tnp	Tnp	
+Transposase	tnsA	TnsA	
+Transposase	tnsB	TnsB	
+Transposase	orfB	OrfB	
+Transposase	tniB	TniB	
+Transposase	tnpA	TnpA	
+Transposase	tnpB	TnpB	
+Transposase	tnp1	Tnp1	
+Transposase	tnp2	Tnp2	
+Transposase	tnpC	tnpC	IS66_family

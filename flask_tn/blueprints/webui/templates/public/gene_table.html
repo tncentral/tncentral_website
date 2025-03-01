@@ -1,0 +1,98 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+<link
+  href="https://cdn.datatables.net/v/dt/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/r-2.4.1/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/datatables.min.css"
+  rel="stylesheet" />
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<link type="text/css" href="{{ url_for('static', filename='css/feedback.css') }}" rel="stylesheet" />
+{% endblock styles %}
+{% block title %}Gene Search{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="row">
+    <div id="div_error" class="alert alert-danger" role="alert" style="display: none;">
+      <span class="material-symbols-outlined" style="vertical-align: middle;">
+        warning
+      </span>
+      <span style="vertical-align: middle;">The search returned zero results.</span>
+      &nbsp;&nbsp;&nbsp;
+      <a href="{{url_for('webui.tn_search')}}" class="btn btn-info" style="vertical-align: middle;">
+        Return to Search Page
+        <span class="material-symbols-outlined" style="vertical-align: middle;">
+          keyboard_return
+        </span>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" style="padding: 0;">
+      <div class="table-responsive" id="tbl_wrapper">
+        <table id="tbl_gene" class="table table-hover w-100">
+          <thead>
+            <tr>
+              <th>Gene Name</th>
+              <th>Gene Class</th>
+              <th>Gene Function</th>
+              <th>ORF Target</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script
+  src="https://cdn.datatables.net/v/dt/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/r-2.4.1/sc-2.1.1/sb-1.4.2/sp-2.1.2/sl-1.6.2/datatables.min.js"></script>
+<script>
+  $(document).ready(function () {
+    let base_url = "{{ url_for('webui.index') }}";
+    var table = $('#tbl_gene').on('preXhr.dt', function (e, settings, data) {
+      {% for key, value in args.items() %}
+      data["{{ key }}"] = "{{ value }}";
+      {% endfor %}
+    }).on('preDraw.dt', function (e, settings) {
+      let dt_json = settings.json;
+      if (dt_json) {
+        if (dt_json.recordsTotal === 0) {
+          $("#div_error").show();
+          $('#tbl_wrapper').hide();
+          return false;
+        } else if (dt_json.recordsTotal === 1) {
+          url = base_url + "report/gene/" + dt_json.data[0].id;
+          window.location.href = url;
+          return false;
+        }
+      }
+    })
+      .DataTable({
+        paging: true,
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        orderable: false,
+        ajax: base_url + 'api/tg/',
+        columns: [
+          {
+            data: 'orf_name',
+            "render": function (data, type, row, meta) {
+              if (type === 'display') {
+                data = "<a href ='" + base_url + "report/gene/" + row.id + "'>" + data + "</a>";
+              }
+
+              return data;
+            }
+          },
+          { data: 'orf_class' },
+          { data: 'subclass' },
+          { data: 'target' }
+        ]
+      });
+  });
+</script>
+{% endblock scripts %}

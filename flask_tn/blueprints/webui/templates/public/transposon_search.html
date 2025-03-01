@@ -1,0 +1,274 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+{% endblock styles %}
+{% block title %}TE/Gene Search{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid global_center">
+  <div class="search_area row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-xs-12">
+      <fieldset class="border p-2">
+        <legend class="float-none w-auto fw-bold">Transposon Search</legend>
+        <!-- Form -->
+        <div class="tn_form">
+          <form id="tn_form" action="{{ url_for('webui.process_tn_search') }}" method="get">
+            <div class="row mb-1">
+              <label for="all_fields" class="col-form-label col-xl-3 col-lg-3 fw-bold">All Fields</label>
+              <div class="col-xl-9 col-lg-9">
+                <input type="text" class="form-control" id="all_fields" name="all_fields">
+              </div>
+            </div>
+            <hr>
+            <div class="row mb-1">
+              <label for="name" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">TE Name</label>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+                <select class="form-select" aria-label="Default select example" name="s_name" id="s_name">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-6 col-12">
+                <input type="text" class="form-control" id="name" name="name">
+              </div>
+            </div>
+
+            <div class="row mb-1">
+              <label for="synon" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">TE Synonym</label>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+                <select class="form-select" aria-label="Default select example" name="s_synon" id="s_synon">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-6 col-12">
+                <input type="text" class="form-control" id="synon" name="synon">
+              </div>
+            </div>
+
+            <div class="row mb-1">
+              <label for="s_type" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">TE Type</label>
+              <div class="col-xl-9 col-lg-9 col-md-12 col-12">
+                <select class="form-select" aria-label="Default select example" id="s_type" name="s_type">
+                  <option selected value="0">All</option>
+                  <option value="1">Insertion Sequence</option>
+                  <option value="2">Integron</option>
+                  <option value="3">Transposon</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mb-1">
+              <label for="family" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">TE Family</label>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+                <select class="form-select" aria-label="Default select example" name="s_family" id="s_family">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-6 col-12">
+                <input type="text" class="form-control" id="family" name="family">
+              </div>
+            </div>
+
+            <div class="row mb-1">
+              <label for="group" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">TE Group</label>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+                <select class="form-select" aria-label="Default select example" name="s_group" id="s_group">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-6 col-12">
+                <input type="text" class="form-control" id="group" name="group">
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <label for="accession" class="col-form-label col-12 fw-bold tn_acc">TnCentral Accession</label>
+              <div class="col-6">
+                <select class="form-select" aria-label="Default select example" name="s_accession" id="s_accession">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <input type="text" class="form-control" id="accession" name="accession">
+              </div>
+              <div class="col-12 d-flex">
+                <div class="ms-auto me-1">
+                  <input class="form-check-input" type="checkbox" value="1" id="chk_internals" name="internals">
+                  <label class="form-check-label" for="chk_internals">
+                    Include internal elements
+                  </label>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row">
+              
+            </div> -->
+
+            <div class="row mt-1">
+              <label for="host" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">Host Organism</label>
+              <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+                <select class="form-select" aria-label="Default select example" name="s_host" id="s_host">
+                  <option selected value="c">contains</option>
+                  <option value="b">begin_with</option>
+                  <option value="e">end_with</option>
+                  <option value="q">equal_to</option>
+                </select>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-6 col-12">
+                <input type="text" class="form-control" id="host" name="host">
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <label for="country" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">Country</label>
+              <div class="col-xl-9 col-lg-9 col-md-12 col-12">
+                <input type="text" class="form-control" id="country" name="country">
+              </div>
+            </div>
+
+            <div class="row mt-1">
+              <label for="isolation" class="col-form-label fw-bold col-xl-3 col-lg-3 col-md-12 col-12">Date of
+                Isolation</label>
+              <div class="col-xl-9 col-lg-9 col-md-12 col-12">
+                <input type="text" class="form-control" id="isolation" name="isolation">
+              </div>
+            </div>
+
+            <div class="row mt-4">
+              <div class="col-4 offset-md-2">
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </div>
+              <div class="col-4 offset-md-2">
+                <button class="btn btn-secondary" type="button">Reset</button>
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+      </fieldset>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+      <fieldset class="border p-2">
+        <legend class="float-none w-auto fw-bold">Gene Search</legend>
+        <!-- Form -->
+        <!-- <div class="gene_form" stype="margin: 0 auto;"> -->
+        <form id="gene_form" action="{{ url_for('webui.process_gene_search') }}" method="get">
+          <div class="row mt-1">
+            <div class="col-12">
+              <label for="gene_name" class="col-form-label fw-bold">Gene Name</label>
+            </div>
+            <div class="col-12">
+              <input type="text" class="form-control" id="gene_name" name="gene_name">
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-12">
+              <label for="gene_class" class="col-form-label fw-bold">Gene Class</label>
+            </div>
+            <div class="col=12">
+              <select class="form-select" aria-label="Select One" id="gene_class" name="gene_class">
+                <option selected value="0">Select One</option>
+                <option value="1">Transposase</option>
+                <option value="2">Accessory Gene</option>
+                <option value="3">Integron Integrase</option>
+                <option value="4">Passenger Gene</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-12">
+              <label for="gene_function" class="col-form-label fw-bold">Gene Function</label>
+            </div>
+            <div class="col-12">
+              <select class="form-select" aria-label="Select One" id="gene_function" name="gene_function">
+                <option selected value="0">Select One</option>
+                <option value="1">Antibiotic Resistance</option>
+                <option value="2">ATPase Transposition Helper</option>
+                <option value="3">Heavy Metal Resistance</option>
+                <option value="4">Inhibitor</option>
+                <option value="5">Resolvase</option>
+                <option value="6">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="text-center">
+              <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+          </div>
+        </form>
+      </fieldset>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function disable_if_empty(field_id) {
+    let is_empty = false;
+    let form_field = $("#" + field_id);
+    if (form_field.val().length === 0) {
+      form_field.prop('disabled', true);
+      is_empty = true;
+    }
+    return is_empty;
+  }
+  function disable_if_default(field_id, default_value) {
+    let form_field = $("#" + field_id);
+    if (form_field.val() === default_value) {
+      form_field.prop('disabled', true);
+    }
+  }
+  function disable_if_with_drop(field_id, drop_id) {
+    let form_field = $("#" + field_id);
+    if (form_field.val().length === 0) {
+      form_field.prop('disabled', true);
+      $("#" + drop_id).prop('disabled', true);
+    }
+  }
+  $('#tn_form').on('submit', function (e) {
+    is_empty = disable_if_empty("all_fields");
+    if (!is_empty) {
+      $("form#tn_form :input").each(function () {
+        var input = $(this);
+        if (input.attr('id') != "all_fields") {
+          input.prop('disabled', true);
+        }
+      });
+    } else {
+      disable_if_with_drop("name", "s_name");
+      disable_if_with_drop("synon", "s_synon");
+      disable_if_default("s_type", "0");
+      disable_if_with_drop("family", "s_family");
+      disable_if_with_drop("group", "s_group");
+      disable_if_with_drop("accession", "s_accession");
+      disable_if_with_drop("host", "s_host");
+      disable_if_empty("country");
+      disable_if_empty("isolation");
+    }
+  });
+  $('#gene_form').on('submit', function (e) {
+    disable_if_empty("gene_name");
+    disable_if_default("gene_class", "0");
+    disable_if_default("gene_function", "0");
+  });
+</script>
+
+{% endblock %}

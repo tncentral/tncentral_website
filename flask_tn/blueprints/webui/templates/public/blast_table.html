@@ -1,0 +1,191 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+{% endblock styles %}
+{% block title %}Blast Result{% endblock title %}
+{% block center_content %}
+
+<div class="container-fluid global_center">
+  <div class="g-0">
+    <div class="d-flex border-bottom border-dark">
+      <div class="">
+        <h5> Blast result page | Job ID: <span class="fw-bold">{{job_id}}</span></h5>
+      </div>
+      <div class="ms-auto" style="display:none;" id="div_btn">
+        <button class="btn btn-outline-primary btn-sm mb-1" id="btn_fasta">
+          <span class="material-symbols-outlined menu_middle">
+            file_save
+          </span>
+          <span class="menu_middle">Input Fasta</span>
+        </button>
+        <button class="btn btn-outline-primary btn-sm mb-1" id="btn_download">
+          <span class="material-symbols-outlined menu_middle">
+            file_save
+          </span>
+          <span class="menu_middle">Blast Output</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="blast_result" style="display:none; font-family: 'Courier New', Courier, monospace;">
+      <div id="blast-multiple-alignments"></div>
+      <div id="blast-alignments-table"></div>
+      <div id="blast-single-alignment"></div>
+    </div>
+
+    <div id="loading" style="display:none;">
+      <div class="d-flex align-items-center">
+        <span class="fw-bold">Downloading result... &nbsp;&nbsp;&nbsp;</span>
+        <div class="spinner-grow" role="status" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div id="waiting">
+      <div class="d-flex align-items-center">
+        <span class="fw-bold">Waiting for blast result...</span>
+        <div class="spinner-grow ms-3" role="status" aria-hidden="true"></div>
+      </div>
+      <div>
+        <span>Your job is <span class="fw-bold" id="status">[waiting server response]</span>.</span>
+        <span>Depending on the sequence, and the parameters, it can take a while...
+          You can copy your job id and come back a few minutes later.</span>
+      </div>
+    </div>
+  </div>
+  <div class="row g-0" id="job_not_found" style="display:none;">
+    <div class="alert alert-warning" role="alert">
+      The job <b>{{job_id}}</b> was not found in our server.
+    </div>
+  </div>
+  <div class="row g-0" id="job_error" style="display:none;">
+    <div class="alert alert-danger" role="alert">
+      The job <b>{{job_id}}</b> was aborted due some server issues.<br>
+      <b>Error:&nbsp;</b><i id="error_description"></i>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %} {% block scripts %}
+<script src="{{url_for('static', filename='js/ext/html2canvas.js')}}"></script>
+<script src="{{url_for('static', filename='js/ext/blasterjs.js')}}"></script>
+<script>
+  let blasterjs = require("biojs-vis-blasterjs");
+  let retrieve = "{{retrieve}}";
+  let job_id = "{{job_id}}";
+  let base_url = "{{ url_for('webui.index') }}";
+  let alignments = "";
+  function get_ajax_result(id) {
+    $.ajax({
+      type: "GET",
+      url: base_url + 'api/status/' + job_id,
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function (data) {
+        if (data.exists === "true") {
+          if (data.failed === "false" && data.finished === "false") {
+            $("#loading").hide();
+            $("#blast_result").hide();
+            $("#job_error").hide();
+            if (data.status === "started") {
+              $("#status").html("running");
+            } else {
+              $("#status").html("enqueued");
+            }
+            $("#waiting").show();
+          } else if (data.failed === "true") {
+            if (id !== undefined) {
+              clearInterval(id);
+            }
+            $("#loading").hide();
+            $("#blast_result").hide();
+            $("#waiting").hide();
+            $.ajax({
+              url: base_url + 'api/blast/error/' + job_id,
+              dataType: 'json',
+              success: function (data) {
+                if (data.error !== "") {
+                  $("#error_description").html(data.error);
+                }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus);
+                console.log(errorThrown);
+              }
+            });
+            $("#job_error").show();
+          } else {
+            if (id !== undefined) {
+              clearInterval(id);
+            }
+            $("#loading").hide();
+            $("#waiting").hide();
+            $("#job_error").hide();
+            $("#div_btn").show();
+            $("#blast_result").show();
+            $.ajax({
+              url: base_url + 'api/blast/out/' + job_id,
+              dataType: 'text',
+              success: function (data) {
+                alignments = data;
+                let instance = new blasterjs({
+                  string: alignments,
+                  multipleAlignments: "blast-multiple-alignments",
+                  alignmentsTable: "blast-alignments-table",
+                  singleAlignment: "blast-single-alignment"
+                });
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(textStatus);
+                console.log(errorThrown);
+              }
+            });
+          }
+        } else {
+          if (id !== undefined) {
+            clearInterval(id);
+          }
+          $("#loading").hide();
+          $("#waiting").hide();
+          $("#job_error").hide();
+          $("#job_not_found").show();
+        }
+      },
+      error: function (XMLHttpRequest, textStatus, errorThrown) {
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  }
+  $(document).ready(function () {
+    if (retrieve === "1") {
+      $("#waiting").hide();
+      $("#loading").show();
+      get_ajax_result();
+    } else {
+      if (retrieve === "-1") {
+        $("#loading").hide();
+        $("#blast_result").hide();
+        $("#waiting").hide();
+        $("#job_not_found").show();
+      } else {
+        let id = setInterval(function () {
+          get_ajax_result(id);
+        }, 1000); // 1 second
+      }
+    }
+    $('#btn_download').on('click', function () {
+      let url = base_url + 'api/blast/file/' + job_id;
+      window.location = url;
+    });
+    $('#btn_fasta').on('click', function () {
+      let url = base_url + 'api/blast/fasta/' + job_id;
+      window.location = url;
+    });
+    // $(".alignment-table-description").on("click", function () {
+    //   alert("Handler for `click` called.");
+    // });
+  });
+</script>
+{% endblock scripts %}

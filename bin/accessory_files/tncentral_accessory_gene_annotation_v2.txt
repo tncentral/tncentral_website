@@ -1,0 +1,27 @@
+Class	Subclass	Gene	Product	SequenceFamily	Chemistry
+Accessory Gene	Resolvase	tniR	TniR	Serine Site-Specific Recombinase	Serine
+Accessory Gene	Resolvase	tnpI	TnpI	Tyrosine Site-Specific Recombinase	Tyrosine
+Accessory Gene	Resolvase	tnpS	TnpS	Tyrosine Site-Specific Recombinase	Tyrosine
+Accessory Gene	Resolvase	tnpT	TnpT		
+Accessory Gene	Resolvase	tnpR	TnpR	Serine Site-Specific Recombinase	Serine
+Accessory Gene	Inhibitor/Regulator	tnpB	TnpB		
+Accessory Gene	Helper	tnpB	TnpB	IS66_family	
+Accessory Gene	CRISPR/Cas	cys4	Cys4	cas6f	
+Accessory Gene	CRISPR/Cas	cys2	Cys2	cas5	
+Accessory Gene	CRISPR/Cas	cys3	Cys3	cas7	
+Accessory Gene	Inhibitor	inh	Inh		
+Accessory Gene	Inhibitor	tnpM	TnpM		
+Accessory Gene	Helper	tnpC	TnpC	Tn554_family	
+Accessory Gene	Inhibitor/Regulator	tnpC	TnpC	Tn3_family	
+Accessory Gene	ATPase Transposition Helper	istB	IstB		
+Accessory Gene	Target Site Selection	tnsD	TnsD		
+Accessory Gene	Target Site Selection	tnsE	TnsE		
+Accessory Gene	Target Site Selection	tniQ	TniQ		
+Accessory Gene	Regulator	orfA	OrfA		
+Accessory Gene	Helper	tnpA	tnpA	IS66_family	
+Accessory Gene	Regulator	tnpA	tnpA		
+Accessory Gene	Resolvase	tniC	TniC	Serine Site-Specific Recombinase	Serine
+Accessory Gene		tniB	TniB		
+Accessory Gene		insA	InsA		
+Accessory Gene	Helper	tnsC	tnsC		
+Accessory Gene		orf2	Orf2		

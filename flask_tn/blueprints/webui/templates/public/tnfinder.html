@@ -1,0 +1,50 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+{% endblock styles %}
+{% block title %}TnFinder{% endblock title %}
+{% block center_content %}
+
+<div class="card">
+  <h5 class="card-header text-bg-warning">Tn3 Transposon Finder</h5>
+  <div class="card-body">
+    <p class="card-text">
+      Tn3 Transposon Finder (Tn3_finder) is a program for the automatic prediction of transposable elements of the Tn3
+      family in bacteria and archaea. It compares bacterial and archaeal genome sequences to custom Tn3
+      transposase+resolvase databases. Results are written in report files and pre-annotated GenBank files to help in
+      subsequent manual curation.
+    </p>
+    <a target="_blank" href="https://github.com/danillo-alvarenga/tn3-ta_finder" class="btn btn-info">GitHub web
+      page</a>
+  </div>
+</div>
+
+<div class="card mt-2">
+  <h5 class="card-header text-bg-warning">Composite Transposon Finder</h5>
+  <div class="card-body">
+    <p class="card-text ">
+      Composite Transposon Finder (TnComp_finder) is a program for the prediction of putative composite transposons in
+      bacterial and archaeal genomes based on insertion sequence replicas in a relatively short span. It works by
+      comparing nucleotide sequences from bacterial and archaeal genomes to a custom transposon database. Results are
+      written in report files and pre-annotated GenBank files to help in subsequent manual curation.
+    </p>
+    <a target="_blank" href="https://github.com/danillo-alvarenga/tncomp_finder" class="btn btn-info">GitHub web
+      page</a>
+  </div>
+</div>
+
+<div class="card mt-2">
+  <h5 class="card-header text-bg-warning">IS Associated with Antibiotic Resistance Genes Finder</h5>
+  <div class="card-body">
+    <p class="card-text">
+      IS Associated with Antibiotic Resistance Genes Finder (ISAbR_finder) is a program for the automatic prediction of
+      antibiotic resistance genes associated with known IS elements derived from the ISfinder database. It works by
+      comparing IS nucleotide sequences from bacterial and archaeal genomes to a custom antibiotic resistance database.
+      Results are written in report files and pre-annotated GenBank files to help in subsequent manual curation.
+    </p>
+    <a href="https://tncentral.ncc.unesp.br/ISAbR_finder.zip" class="btn btn-info"> Download IS Associated with
+      Antibiotic Resistance Genes Finder</a>
+  </div>
+</div>
+
+
+{% endblock %}

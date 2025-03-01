@@ -1,0 +1,152 @@
+{% extends "_include/base.html" %}
+{% block title %}Home{% endblock title %}
+
+{% block center_content %}
+<div class="container-fluid center_content">
+  <div class="row g-0">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 left_center">
+      <img src="{{ url_for('static', filename='images/central_image.png') }}" class="img-center img-fluid" alt="">
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 right_center">
+      <div class="quick_div text-center">
+        <h6 class="text-center header_quick">Quick TnCentral Search:</h6>
+        <hr class="front_hr">
+        <form action="{{url_for('webui.quick_tn_search')}}" method="get">
+          <div class="input-group first_input input_search">
+            <input type="text" class="form-control field_search" id="all_fields" name="all_fields"
+              placeholder="Search transposable element" required>
+            <button id="btn_te" class="btn btn-success btn_search" type="submit">
+              <span class="material-symbols-outlined svg_size">
+                search
+              </span>
+            </button>
+          </div> <!-- <div class="input-group"> -->
+        </form>
+        {% with errors_tn = get_flashed_messages(category_filter=['error_tn']) %}
+        {% if errors_tn %}
+        <div class="alert alert-danger fade show alert_home" role="alert">
+          <span class="fw-bold">&nbsp;{{ errors_tn[0] }}</span>
+          <button type="button" class="btn-close btn_hidden" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endwith %}
+        <form action="{{url_for('webui.quick_gene_search')}}" method="get">
+          <div class="input-group second_input input_search">
+            <input type="text" class="form-control field_search" id="gene_all_fields" name="gene_all_fields"
+              placeholder="Seach gene" required>
+            <button id="btn_gene" class="btn btn-info btn_search" type="submit">
+              <span class="material-symbols-outlined svg_size">
+                search
+              </span>
+            </button>
+          </div>
+        </form>
+        {% with errors_gn = get_flashed_messages(category_filter=['error_gn']) %}
+        {% if errors_gn %}
+        <div class="alert alert-danger fade show alert_home" role="alert">
+          <span class="fw-bold">&nbsp;{{ errors_gn[0] }}</span>
+          <button type="button" class="btn-close btn_hidden" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <h6 class="text-center header_blast">Looking for blast result?</h6>
+        <hr class="front_hr">
+        <form id="form_retrieve" action="{{url_for('webui.quick_job_id')}}" method="get">
+          <div class="input-group input_search">
+            <input type="text" class="form-control field_search" id="job_id" name="job_id"
+              placeholder="Please type a valid Job ID" required>
+            <button id="btn_job" class="btn btn-warning btn_search" type="submit"
+              title="Click to retrieve blast by job id">
+              <span class="material-symbols-outlined svg_size">
+                search
+              </span>
+            </button>
+          </div>
+        </form>
+        {% with errors_bl = get_flashed_messages(category_filter=['error_bl']) %}
+        {% if errors_bl %}
+        <div class="alert alert-danger fade show alert_home" role="alert">
+          <span class="fw-bold">&nbsp;{{ errors_bl[0] }}</span>
+          <button type="button" class="btn-close btn_hidden" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        {% endwith %}
+      </div> <!-- quick_div -->
+    </div> <!-- <div class="col-xl-6 col-lg-6 col-md-6"> -->
+  </div> <!-- row -->
+  <div class="row">
+    <div class="families_row">
+      <div class="first_families_row">
+        <a type="button" class="button-8 btn_family" id="btn_tn3" role="button">
+          <span class="txt_family">Tn3</span>
+          <span class="badge badge_family">{{tn3}} entries</span>
+        </a>
+        <a type="button" class="button-8 btn_family" id="btn_tn402" role="button">
+          <span class="txt_family">Tn402/In</span>
+          <span class="badge badge_family">{{tn402}} entries</span>
+        </a>
+        <a type="button" class="button-8 btn_family" id="btn_compound" role="button">
+          <span class="txt_family">Compound Transposon</span>
+          <span class="badge badge_family">{{compound}} entries</span>
+        </a>
+        <a type="button" class="button-8 btn_family" id="btn_tn554" role="button">
+          <span class="txt_family">Tn554</span>
+          <span class="badge badge_family">{{tn554}} entries</span>
+        </a>
+        <a type="button" class="button-8 btn_family" id="btn_tn7" role="button">
+          <span class="txt_family">Tn7</span>
+          <span class="badge badge_family">{{tn7}} entries</span>
+        </a>
+      </div>
+      <div class="integrall_row">
+        <!-- <a type="button" class="button-8 btn_family" id="btn_int" role="button" href="/v2/table/integrall"> -->
+        <a type="button" class="button-8 btn_family" id="btn_int" role="button">
+          <span class="txt_family">Integrall</span>
+          <span class="badge badge_family">{{integrall}} entries</span>
+        </a>
+      </div>
+    </div> <!-- <div class="families_row"> -->
+  </div> <!-- <div class="row"> -->
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  $(document).ready(function () {
+    // console.log($(window).width());
+    // console.log($(window).height());
+
+    let base_api = "{{ url_for('restapi.api_base') }}";
+    let base_url = "{{ url_for('webui.index') }}";
+    $("#btn_tn3").on('click', function (e) {
+      redirect_family("tn3");
+    });
+    $("#btn_tn402").on('click', function (e) {
+      redirect_family("Tn402");
+    });
+    $("#btn_compound").on('click', function (e) {
+      redirect_family("compound");
+    });
+    $("#btn_tn554").on('click', function (e) {
+      redirect_family("Tn554");
+    });
+    $("#btn_tn7").on('click', function (e) {
+      redirect_family("Tn7");
+    });
+    function redirect_family(family) {
+      let url = base_url;
+      if (family === "compound") {
+        url = url + "table/mges?s_family=c&family=compound";
+      } else {
+        url = url + "table/mges?s_family=q&family=" + family;
+      }
+      window.location = url;
+    }
+    $("#btn_int").on('click', function (e) {
+      let url = base_url + "table/integrall";
+      window.location = url;
+    });
+  });
+</script>
+{% endblock %}

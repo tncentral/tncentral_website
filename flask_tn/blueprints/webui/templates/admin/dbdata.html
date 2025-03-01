@@ -1,0 +1,392 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.css" rel="stylesheet">
+{% endblock styles %}
+{% block title %}TnCentral Data{% endblock title %}
+
+{% block content %}
+<div class="row me-lg-1" style="background-color: bisque;">
+  <h5>
+    <span class="material-icons align_middle">manage_search</span>
+    <span class="content_header align_middle">
+      Quick filter
+    </span>
+  </h5>
+</div>
+<div class="row row-cols-lg-auto g-3 align-items-center mt-1">
+  <div class="col-auto">
+    <select class="form-select" aria-label="Default select example" id="q_type" name="q_type">
+      <option selected value="">Filter by Type</option>
+      <option value="insertion sequence">Insertion Sequence</option>
+      <option value="integron">Integron</option>
+      <option value="transposon">Transposon</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select" aria-label="Default select example" id="q_family" name="q_family">
+      <option selected value="">Filter by Family</option>
+      <option value="Tn3">Tn3</option>
+      <option value="Tn402">Tn402</option>
+      <option value="Compound Transposon">Compound Transposon</option>
+      <option value="Tn554">Tn554</option>
+      <option value="Tn7">Tn7</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select" aria-label="Default select example" id="q_group" name="q_group">
+      <option selected value="">Filter by Group</option>
+      <option value="Tn21">Tn21</option>
+      <option value="Tn163">Tn163</option>
+      <option value="Tn3000">Tn3000</option>
+      <option value="Tn3">Tn3</option>
+      <option value="Tn4651">Tn4651</option>
+      <option value="Tn5053">Tn5053</option>
+    </select>
+  </div>
+  <div class="col-auto">
+    <select class="form-select" aria-label="Default select example" id="q_trans" name="q_trans">
+      <option selected value="">Evidence of Transposition</option>
+      <option value="1">Yes</option>
+      <option value="0">No</option>
+    </select>
+  </div>
+</div>
+
+<div class="row mt-lg-3 mt-md-2 me-lg-1" style="background-color: bisque;">
+  <div class="col-xl-6 col-lg-6 col-md-6">
+    <h5>
+      <span class="material-icons align_middle">
+        format_list_bulleted
+      </span>
+      <span class="content_header align_middle">
+        TnCentral Mobile Elements
+      </span>
+    </h5>
+  </div>
+  <div class="col-xl-3 col-lg-2 col-md-2"></div>
+  <div class="col-xl-3 col-lg-4 col-md-4 gx-0">
+    <div class="input-group">
+      <span class="input-group-text" id="search_icon">
+        <span class="material-symbols-outlined">
+          search
+        </span>
+      </span>
+      <input id="global_filter" type="text" class="form-control" placeholder="Search entries" aria-label="Username"
+        aria-describedby="search_icon">
+    </div>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-md-12">
+    <table id="tbl_genbank" class="table table-hover display" style="width:100%">
+      <thead>
+        <tr>
+          <th class="select-checkbox"><input id="checkBox" type="checkbox"></th>
+          <th>Accession</th>
+          <th>Type</th>
+          <th>Family</th>
+          <th>Group</th>
+          <th>Host Org.</th>
+          <th>Country</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
+<script>
+  let base_url = "{{ url_for('admin.home') }}";
+  function download_selection(db, ext, dt) {
+    let ext_param = "ext=" + ext;
+    let rows_selected = dt.rows({ selected: true });
+    if (rows_selected.count() === 0) {
+      alert('Please select at least one file to download.');
+      return 0;
+    }
+    let url = base_url;
+    let check_url = base_url;
+    const formData = {
+      'csrf_token': "{{ csrf_token() }}"
+    }
+
+    if (rows_selected.count() === 1) {
+      url += 'download/' + db + '/';
+      url += rows_selected.data()[0].accession;
+      url += "?" + ext_param;
+      check_url += 'check_download/' + db + '?accession=';
+      check_url += rows_selected.data()[0].accession;
+      check_url += "&" + ext_param;
+    } else {
+      url += 'bulk/' + db;
+      check_url += 'check_download/' + db;
+
+      data = rows_selected.data();
+      url += "?" + ext_param;
+      check_url += "?" + ext_param;
+      for (let i = 0; i < rows_selected.count(); i++) {
+        url += "&accession=" + data[i].accession;
+        check_url += "&accession=" + data[i].accession;
+      }
+    }
+    $.ajax({
+      type: "POST",
+      url: check_url,
+      data: formData,
+      dataType: "json",
+      encode: true,
+      success: function (data) {
+        if (data.status === "ok") {
+          window.location = url;
+        } else {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: data.error,
+            showConfirmButton: false
+          });
+        }
+      },
+      error: function (data) {
+        Swal.fire({
+          position: "center",
+          icon: "danger",
+          title: "Something went wrong. Please contact admin.",
+          text: data.error,
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
+    });
+  }
+  $.fn.dataTable.ext.buttons.delete_selected = {
+    text: 'Delete',
+    action: function (e, dt, node, config) {
+      let db = "d";
+      let ext = "fa";
+      download_selection(db, ext, dt);
+    }
+  };
+  $.fn.dataTable.ext.buttons.fasta_selected = {
+    text: 'Fasta',
+    action: function (e, dt, node, config) {
+      let db = "d";
+      let ext = "fa";
+      download_selection(db, ext, dt);
+    }
+  };
+
+  $.fn.dataTable.ext.buttons.genbank_selected = {
+    text: 'Genbank',
+    action: function (e, dt, node, config) {
+      let db = "d";
+      let ext = "gb";
+      download_selection(db, ext, dt);
+    }
+  };
+
+  $.fn.dataTable.ext.buttons.snapgene_selected = {
+    text: 'Snapgene',
+    action: function (e, dt, node, config) {
+      let db = "d";
+      let ext = "dna";
+      download_selection(db, ext, dt);
+    }
+  };
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger"
+    },
+    buttonsStyling: true
+  });
+  const swalWithBootstrapButtons2 = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger"
+    },
+    buttonsStyling: true
+  });
+
+  $(document).ready(function () {
+    let table = $('#tbl_genbank').on('preXhr.dt', function (e, settings, data) {
+      dict_select = update_datatable();
+      for (var key in dict_select) {
+        data[key] = dict_select[key];
+      }
+
+    }).DataTable({
+      paging: true,
+      processing: true,
+      responsive: true,
+      order: [2, 'asc'],
+      select: {
+        style: 'multi',
+        selector: 'td:first-child'
+      },
+      ajax: base_url + '/te/',
+      columns: [
+        { data: 'select' },
+        { data: 'accession' },
+        { data: 'type' },
+        { data: 'family' },
+        { data: 'group' },
+        { data: 'organism' },
+        { data: 'country' },
+        {
+          data: function (data, type, row, meta) {
+            return "<input type=\"button\" class=\"btn btn-sm btn-outline-primary btn-edit\" id=\"n-" + meta.row +
+              "\" value=\"Edit\"/>&nbsp;<input type=\"button\" class=\"btn btn-sm btn-outline-danger btn-delete\" id=\"s-" +
+              meta.row + "\" value=\"Delete\"/>";
+          }
+        }
+      ],
+      "columnDefs": [
+        { targets: 0, orderable: false, className: 'select-checkbox' }
+      ],
+      layout: {
+        topStart: 'buttons',
+        topEnd: 'pageLength',
+        bottomStart: 'info',
+        bottomEnd: 'paging',
+      },
+      buttons: {
+        name: 'primary',
+        buttons: [
+          {
+            extend: 'spacer',
+            style: 'empty',
+            text: '<b class="align_middle">Download as:&nbsp;&nbsp;</b>'
+          }, 'fasta_selected', 'genbank_selected', 'snapgene_selected'
+        ]
+      }
+    });
+    $('#tbl_genbank tbody').on('click', '.btn-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      // redirect to page where we can edit the genbank
+      var url = base_url + 'edit/d/' + data.accession;
+      window.location = url;
+    });
+    $('#tbl_genbank tbody').on('click', '.btn-delete', function () {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        buttonsStyling: true
+      });
+      const swalWithBootstrapButtons2 = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        buttonsStyling: true
+      });
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this genbank?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons2.fire({
+            title: "Deleting '" + data.accession + "'. Confirm exclusion?",
+            text: "This action can not be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: false
+          }).then((result2) => {
+            if (result2.isConfirmed) {
+              let accession = data.accession;
+              let in_prod = '1';
+              let csrf = "{{ csrf_token() }}";
+              console.log('before delete');
+              delete_genbank(accession, in_prod, csrf);
+              swalWithBootstrapButtons.fire({
+                title: "Deleted!",
+                text: "Genbank '" + accession + "' has been deleted.",
+                icon: "success"
+              });
+            }
+          });
+
+        }
+      });
+    });
+
+    function delete_genbank(accession, in_prod, csrf) {
+      const del_url = base_url + 'genbank/' + accession;
+      const formData = {
+        'in_prod': in_prod.toString(),
+        'csrf_token': csrf
+      }
+      $.ajax({
+        type: "DELETE",
+        url: del_url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        async: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            table.ajax.reload();
+          }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+      });
+    }
+    $('#checkBox').on('click', function () {
+      if ($('#checkBox').is(':checked')) {
+        table.rows({page: 'current'}).select();
+      }
+      else {
+        table.rows().deselect();
+      }
+    });
+
+    // change selects:
+    $("#q_type").on("change", function () {
+      table.ajax.reload();
+    });
+    $("#q_family").on("change", function () {
+      table.ajax.reload();
+    });
+    $("#q_group").on("change", function () {
+      table.ajax.reload();
+    });
+    $("#q_trans").on("change", function () {
+      table.ajax.reload();
+    });
+    $('#global_filter').on('input', function (e) {
+      let text = $('#global_filter').val();
+      table.search(text).draw();
+    });
+  });
+  function update_datatable() {
+    let dict_return = {};
+    const dict_keys = ["type", "family", "group", "transposition"];
+    const dict_values = ["q_type", "q_family", "q_group", "q_trans"];
+    for (var index = 0; index < dict_keys.length; index++) {
+      value = $("#" + dict_values[index]).val();
+      if (value !== "") {
+        dict_return[dict_keys[index]] = value;
+      }
+    }
+    return dict_return;
+  }
+</script>
+{% endblock scripts %}

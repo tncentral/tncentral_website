@@ -1,0 +1,1559 @@
+{% extends "_include/base_admin.html" %}
+{% block title %}Edit Genbank{% endblock title %}
+
+{% block content %}
+
+<div class="row g-0">
+  <div class="d-grid gap-2 d-md-block edit_gb_tool">
+    <a href="{{url_for('admin.dbdata')}}" class="text-decoration-none">
+      <button id="btn-back" class="btn btn-sm btn-outline-info">
+        <span class="material-symbols-outlined align_middle">
+          arrow_back
+        </span>
+      </button>
+    </a>
+    <button id="btn-save" class="btn btn-sm btn-primary">
+      <span class="material-symbols-outlined align_middle">
+        save
+      </span>
+      <span class="align_middle">Save</span>
+    </button>
+    <button id="btn-run" class="btn btn-sm btn-primary">
+      <span class="material-symbols-outlined align_middle">
+        page_info
+      </span>
+      <span class="align_middle">Run QC</span>
+    </button>
+  </div>
+</div>
+<div class="accordion w-100 mt-lg-1 mb-lg-1" id="accordionGeneral">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+        aria-expanded="true" aria-controls="collapseOne">
+        <span class="material-symbols-outlined align_middle">feed</span>
+        <span class="content_header align_middle">
+          General Information
+        </span>
+      </button>
+    </h1>
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+      data-bs-parent="#accordionGeneral">
+      <div class="accordion-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <label for="mge_accession" class="form-label"><strong>Accession</strong></label>
+            <input type="text" class="form-control" id="mge_accession" name="mge_accession"
+              placeholder="Type here the accession" value="{{ te.accession }}" disabled>
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_name" class="form-label"><strong>Name</strong></label>
+            <input type="text" class="form-control" id="mge_name" name="mge_name" placeholder="Please type the name"
+              value="{{ te.name }}" disabled>
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_type" class="form-label"><strong>Mobile element type</strong></label>
+            <select class="form-select" name="mge_type" id="mge_type" aria-label="Default select example">
+              <option value="transposon" {% if te.type=='transposon' %} selected="selected" {% endif %}> Transposon
+              </option>
+              <option value="insertion sequence" {% if te.type=='insertion sequence' %} selected="selected" {% endif %}>
+                Insertion Sequence</option>
+              <option value="integron" {% if te.type=='integron' %} selected="selected" {% endif %}>Integron
+              </option>
+              <option value="other" {% if te.type=='other' %} selected="selected" {% endif %}>Other</option>
+            </select>
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_group" class="form-label"><strong>Group</strong></label>
+            <input type="text" class="form-control" id="mge_group" name="mge_group" placeholder="Type here the group"
+              value="{{ te.group }}">
+          </div>
+        </div> <!-- <div class="row"> -->
+
+        <div class="row mt-1">
+          <div class="col-sm-3">
+            <label for="mge_family" class="form-label"><strong>Family</strong></label>
+            <input type="text" class="form-control" id="mge_family" name="mge_family" placeholder="Type here the family"
+              value="{{ te.family }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_synonyms" class="form-label"><strong>Synonyms</strong></label>
+            <input type="text" class="form-control" id="mge_synonyms" name="mge_synonyms"
+              placeholder="Type here the synonyms" value="{{ te.synonyms }}">
+          </div>
+          <div class="col-sm-3 mt-1">
+            <label for="p_yes" class="form-label"><strong>Partial</strong></label>
+            <br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="1" name="partial" id="p_yes" {% if te.partial==1 %}
+                checked {% endif%}>
+              <label class="form-check-label" for="p_yes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="0" name="partial" id="p_no" {% if te.partial==0 %}
+                checked {% endif%}>
+              <label class="form-check-label" for="p_no">No</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="None" name="partial" id="p_noinfo" {% if
+                te.partial==None %} checked {% endif%}>
+              <label class="form-check-label" for="p_noinfo">ND</label>
+            </div>
+          </div>
+          <div class="col-sm-3 mt-1">
+            <label for="tr_yes" class="form-label"><strong>Evidence of transposition</strong></label>
+            <br>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="1" name="transposition" id="tr_yes" {% if
+                te.transposition==1 %} checked {% endif%}>
+              <label class="form-check-label" for="tr_yes">Yes</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="0" name="transposition" id="tr_no" {% if
+                te.transposition==0 %} checked {% endif%}>
+              <label class="form-check-label" for="tr_no">No</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" value="None" name="transposition" id="tr_noinfo" {% if
+                te.transposition==None %} checked {% endif%}>
+              <label class="form-check-label" for="tr_noinfo">ND</label>
+            </div>
+          </div>
+
+        </div> <!-- <div class="row mt-1"> -->
+        <div class="row mt-2">
+          <div class="col-sm-12">
+            <label for="mge_comment" class="form-label"><strong>Other Information</strong></label>
+            <textarea class="form-control" id="mge_comment" name="mge_comment"
+              placeholder="Type here other information">{{ te.comment }}</textarea>
+          </div>
+
+
+
+        </div> <!-- <div class="row mt-2"> -->
+      </div> <!-- <div class="accordion-body"> -->
+    </div> <!-- <div id="collapseOne" class="accordion-collapse -->
+  </div> <!-- <div class="accordion-item"> -->
+</div> <!-- <div class="accordion w-100" id="accordionGeneral"> -->
+
+<div class="accordion w-100 mb-lg-1" id="accordionHost">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingTwo">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+        aria-expanded="true" aria-controls="collapseTwo">
+        <span class="material-symbols-outlined align_middle">bug_report</span>
+        <span class="content_header align_middle">
+          Host
+        </span>
+      </button>
+    </h1>
+    <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo"
+      data-bs-parent="#accordionHost">
+      <div class="accordion-body">
+        <div class="row mt-1">
+          <div class="col-sm-3">
+            <label for="mge_organism" class="form-label"><strong>Host Organism</strong></label>
+            <input type="text" class="form-control" id="mge_organism" name="mge_organism"
+              placeholder="Type here the host organism" value="{{ te.organism }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_taxonomy" class="form-label"><strong>Taxonomy</strong></label>
+            <input type="text" class="form-control" id="mge_taxonomy" name="mge_taxonomy"
+              placeholder="Type here NCBI taxonomy" value="{{ te.taxonomy }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_bac_group" class="form-label"><strong>Bacterial Group</strong></label>
+            <input type="text" class="form-control" id="mge_bac_group" name="mge_bac_group"
+              placeholder="Type here the bacterial group" value="{{ te.bacteria_group }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_source" class="form-label"><strong>Molecular Source</strong></label>
+            <input type="text" class="form-control" id="mge_source" name="mge_source"
+              placeholder="Type here the molecular source" value="{{ te.molecular_source }}">
+          </div>
+        </div> <!-- <div class="row mt-1"> -->
+        <div class="row mt-2">
+          <div class="col-sm-3">
+            <label for="mge_region" class="form-label"><strong>Region</strong></label>
+            <input type="text" class="form-control" id="mge_region" name="mge_region" placeholder="Type here the region"
+              value="{{ te.region }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_country" class="form-label"><strong>Country</strong></label>
+            <input type="text" class="form-control" id="mge_country" name="mge_country"
+              placeholder="Type here the country" value="{{ te.country }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_other_loc" class="form-label"><strong>Other Location Info</strong></label>
+            <input type="text" class="form-control" id="mge_other_loc" name="mge_other_loc"
+              placeholder="Type here the other location info" value="{{ te.other_loc }}">
+          </div>
+          <div class="col-sm-3">
+            <label for="mge_date" class="form-label"><strong>Date of Isolation</strong></label>
+            <input type="text" class="form-control" id="mge_date" name="mge_date"
+              placeholder="Type here the date of isolation" value="{{ te.date }}">
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-sm-3">
+              <label for="fi_yes" class="form-label"><strong>First isolate</strong></label>
+              <br>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="first_isolate" id="fi_yes" value="1" {% if
+                  te.first_isolate==1 %} checked {% endif%}>
+                <label class="form-check-label" for="fi_yes">Yes</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="first_isolate" value="0" id="fi_no" {% if
+                  te.first_isolate==0 %} checked {% endif%}>
+                <label class="form-check-label" for="fi_no">No</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="first_isolate" value="None" id="fi_noinfo" {% if
+                  te.first_isolate==None %} checked {% endif%}>
+                <label class="form-check-label" for="fi_noinfo">ND</label>
+              </div>
+            </div> <!-- <div class="col-sm-3"> -->
+          </div> <!-- <div class="row"> -->
+        </div>
+      </div> <!-- <div class="accordion-body"> -->
+    </div> <!-- <div id="collapseTwo" class="accordion-collapse -->
+  </div> <!-- <div class="accordion-item"> -->
+</div> <!-- <div class="accordion w-100" id="accordionHost"> -->
+
+<div class="accordion w-100 mb-lg-1" id="accordionMap">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingThree">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"
+        aria-expanded="true" aria-controls="collapseThree">
+        <span class="material-symbols-outlined align_middle">science</span>
+        <span class="content_header align_middle">
+          Snapgene
+        </span>
+      </button>
+    </h1>
+    <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree"
+      data-bs-parent="#accordionMap">
+      <div class="accordion-body">
+        <div class="row g-0">
+          <div class="col-md-12">
+            <span class="text-decoration-underline fw-bold">Snapgene Binary File:</span>
+
+            <span id="txt_snap" class="ms-2">
+            </span>
+            <a class="btn btn-primary btn-sm ms-2" id="btn_snap">Upload File</a>
+            <a class="btn btn-danger btn-sm ms-2" id="btn_del_snap">Delete File</a>
+
+          </div>
+        </div>
+        <div class="row g-0 mt-2">
+          <div class="col-md-12">
+            <span class="text-decoration-underline fw-bold">Snapgene Image:</span>
+            <span id="txt_image" class="ms-2">
+            </span>
+            <a class="btn btn-primary btn-sm ms-2" id="btn_map">Upload Image</a>
+            <a class="btn btn-danger btn-sm ms-2" id="btn_del_map">Delete Image</a>
+            <a class="btn btn-info btn-sm ms-2" id="btn_show_map">Show Image</a>
+          </div>
+        </div>
+      </div>
+    </div> <!-- <div id="collapseThree" class="accordion-collaps -->
+  </div> <!-- <div class="accordion-item"> -->
+</div> <!-- <div class="accordion w-100" id="accordionMap"> -->
+<!-- Repeats -->
+{% if repeats|length > 0 %}
+<div class="accordion w-100 mb-lg-1" id="accordionRep">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingFour">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour"
+        aria-expanded="true" aria-controls="collapseFour">
+        <span class="material-symbols-outlined align_middle">genetics</span>
+        <span class="content_header align_middle">
+          Terminal Inverted Repeats
+        </span>    
+      </button>
+    </h1>
+    <div id="collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingFour"
+      data-bs-parent="#accordionRep">
+      <div class="accordion-body">
+        <!-- <button>Add New Repeat</button> -->
+        <div class="table-responsive">
+          <table id="table_repeat" class="table table-bordered">
+            <thead>
+              <tr class="table-info">
+                <th class="d-none">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Coordinates</th>
+                <th scope="col">Direction</th>
+                <th scope="col">Length</th>
+                <th scope="col">Sequence</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for rep in repeats %}
+              <tr>
+                <td class="d-none">{{rep.repeat_id}}</td>
+                <th scope="row">{{rep.name}}</th>
+                <td>{{rep.fragments[0].start}}-{{rep.fragments[0].end}}</td>
+                <td>{{rep.fragments[0].strand}}</td>
+                <td>{{rep.sequence|length}}</td>
+                <td>{{rep.format_sequence(10)|upper}}</td>
+                <td>
+                  <button type="button" id="ed-{{rep.repeat_id}}"
+                    class="btn btn-warning btn-sm rep-edit w-100">Edit</button>
+                  <!-- <button type="button" id="del-{{rep.repeat_id}}"
+                        class="btn btn-danger btn-sm rep-delete">Delete</button> -->
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}<!-- if repeat -->
+{% if orfs|length > 0 %}
+<div class="accordion w-100 mb-lg-1" id="accordionOrf">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingFive">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive"
+        aria-expanded="true" aria-controls="collapseFive">
+        <span class="material-symbols-outlined align_middle">genetics</span>
+        <span class="content_header align_middle">
+          ORFs
+        </span>
+      </button>
+    </h1>
+    <div id="collapseFive" class="accordion-collapse collapse show" aria-labelledby="headingFive"
+      data-bs-parent="#accordionOrf">
+      <div class="accordion-body">
+        <div class="table-responsive">
+          <table id="table_orf" class="table table-bordered">
+            <thead>
+              <tr class="table-info">
+                <th class="d-none">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Coordinates</th>
+                <th scope="col">Direction</th>
+                <th scope="col">Class</th>
+                <th scope="col">Subclass</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for orf in orfs %}
+              <tr>
+                <th scope="row">{{orf.name}}</th>
+                <td class="d-none">{{orf.orf_id}}</td>
+                <td>
+                  {% if orf.fragments.count() > 1 %}
+                  join({{orf.fragments[0].start}}..{{orf.fragments[0].end}}
+                  {% for idx in range(1,orf.fragments.count()) %}
+                  , {{orf.fragments[idx].start}}..{{orf.fragments[idx].end}}
+                  {% endfor %})
+                  {% else %}
+                  {{orf.fragments[0].start}}-{{orf.fragments[0].end}}
+                  {% endif %}
+                </td>
+                <td>{{orf.fragments[0].strand}}</td>
+                <td>{{orf.orf_class}}</td>
+                <td>{{orf.subclass}}</td>
+                <td>
+                  <button type="button" id="ed-{{orf.orf_id}}"
+                    class="btn btn-warning btn-sm orf-edit w-100">Edit</button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} <!-- if recomb -->
+{% if recombs|length > 0 %}
+<div class="accordion w-100 mb-lg-1" id="accordionRes">
+  <div class="accordion-item">
+    <h1 class="accordion-header" id="headingSix">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix"
+        aria-expanded="true" aria-controls="collapseSix">
+        <span class="material-symbols-outlined align_middle">genetics</span>
+        <span class="content_header align_middle">
+          Recombination Sites
+        </span>
+      </button>
+    </h1>
+    <div id="collapseSix" class="accordion-collapse collapse show" aria-labelledby="headingSix"
+      data-bs-parent="#accordionRes">
+      <div class="accordion-body">
+        <div class="table-responsive">
+          <table id="table_recomb" class="table table-bordered">
+            <thead>
+              <tr class="table-info">
+                <th class="d-none">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Coordinates</th>
+                <th scope="col">Direction</th>
+                <th scope="col">Length</th>
+                <th scope="col">Sequence</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for recomb in recombs %}
+              <tr>
+                <td class="d-none">{{recomb.recomb_id}}</td>
+                <th scope="row">{{recomb.name}}</th>
+                <td>
+                  {% if recomb.fragments.count() > 1 %}
+                  join({{recomb.fragments[0].start}}..{{recomb.fragments[0].end}}
+                  {% for idx in range(1,recomb.fragments.count()) %}
+                  , {{recomb.fragments[idx].start}}..{{recomb.fragments[idx].end}}
+                  {% endfor %})
+                  {% else %}
+                  {{recomb.fragments[0].start}}-{{recomb.fragments[0].end}}
+                  {% endif %}
+                </td>
+                <td>{{recomb.fragments[0].strand}}</td>
+                <td>{{recomb.sequence|length}}</td>
+                <td>{{recomb.format_sequence(10)|upper}}</td>
+                <td>
+                  <button type="button" id="ed-{{recomb.recomb_id}}"
+                    class="btn btn-warning btn-sm recomb-edit w-100">Edit</button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %} <!-- if recomb -->
+
+<!-- modal for confirmation -->
+<div class="modal" id="modal_confirm" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="header_confirm"></h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="body_confirm"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-confirmation" id="dummy-btn">Yes</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modal repeat edit -->
+<div class="modal" id="modal_edit_repeat" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Repeat Editing</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form -->
+          <form id="form_repeat_edit" action="{{url_for('admin.save_repeat')}}" class="ms-2 mb-2 align-items-center"
+            method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-6">
+                <label for="rep_name" class="form-label"><strong>Name</strong></label>
+                <input type="text" class="form-control" id="rep_name" name="rep_name" disabled />
+              </div>
+              <div class="col-6">
+                <label for="library_name" class="form-label"><strong>Library Name</strong></label>
+                <input type="text" class="form-control" id="library_name" name="library_name" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="rep_seq" class="form-label"><strong>Sequence</strong></label>
+                <textarea class="form-control" id="rep_seq" name="rep_seq" disabled></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="rep_comment" class="form-label"><strong>Comments</strong></label>
+                <textarea class="form-control" id="rep_comment" name="rep_comment"></textarea>
+              </div>
+            </div>
+            <fieldset class="mt-2">
+              <legend>
+                <strong>Alignment position</strong>
+                <!-- <button class="btn btn-sm btn-primary" id="rep_add_new">Add New</button>
+                <button class="btn btn-sm btn-danger" id="rep_del_last">Remove Last</button> -->
+              </legend>
+              <div id="fragments_rows">
+              </div>
+            </fieldset>
+            <input type="hidden" id="rep_id" name="rep_id" value="" />
+            <hr>
+            <div class="row d-flex">
+              <button class="btn btn-primary btn-sm ms-auto" type="submit">Save Repeat</button>
+            </div>
+
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_edit_repeat"  -->
+
+<!-- modal orf edit -->
+<div class="modal" id="modal_edit_orf" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ORF Editing</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form -->
+          <form id="form_edit_orf" action="{{url_for('admin.save_orf')}}" class="ms-2 mb-2 align-items-center"
+            method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-4">
+                <label for="orf_name" class="form-label"><strong>Name</strong></label>
+                <input type="text" class="form-control" id="orf_name" name="orf_name" disabled />
+              </div>
+              <div class="col-4">
+                <label for="orf_library_name" class="form-label"><strong>Library Name</strong></label>
+                <input type="text" class="form-control" id="orf_library_name" name="library_name" />
+              </div>
+              <div class="col-4">
+                <label for="orf_class" class="form-label"><strong>Class</strong></label>
+                <select class="form-select" name="orf_class" id="orf_class" aria-label="Default select">
+                  <option value="Transposase"> Transposase</option>
+                  <option value="Accessory Gene"> Accessory Gene</option>
+                  <option value="Passenger Gene"> Passenger Gene</option>
+                  <option value="Integron Integrase"> Integron Integrase</option>
+                  <option value="Other"> Other</option>
+                </select>
+              </div>
+            </div> <!-- <div class="row"> -->
+            <div class="row">
+              <div class="col-6">
+                <label for="subclass" class="form-label"><strong>Subclass</strong></label>
+                <input type="text" class="form-control" id="subclass" name="subclass" />
+              </div>
+              <div class="col-6">
+                <label for="sequence_family" class="form-label"><strong>Sequence Family</strong></label>
+                <input type="text" class="form-control" id="sequence_family" name="sequence_family" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-9">
+                <label for="function" class="form-label"><strong>Function</strong></label>
+                <input type="text" class="form-control" id="function" name="function" />
+              </div>
+              <div class="col-3">
+                <label for="chemistry" class="form-label"><strong>Chemistry</strong></label>
+                <input type="text" class="form-control" id="chemistry" name="chemistry" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="target" class="form-label"><strong>Target</strong></label>
+                <textarea class="form-control" id="target" name="target"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="orf_comment" class="form-label"><strong>Other Information</strong></label>
+                <textarea class="form-control" id="orf_comment" name="comment"></textarea>
+              </div>
+            </div>
+            <fieldset class="mt-2">
+              <legend>
+                <strong>Alignment position</strong>
+                <!-- <button class="btn btn-sm btn-primary" id="rep_add_new">Add New</button>
+                <button class="btn btn-sm btn-danger" id="rep_del_last">Remove Last</button> -->
+              </legend>
+              <div id="orf_fragments_rows">
+              </div>
+            </fieldset>
+            <input type="hidden" id="orf_id" name="orf_id" value="" />
+            <hr>
+            <div class="row d-flex">
+              <button class="btn btn-primary btn-sm ms-auto" type="submit">Save ORF</button>
+            </div>
+
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_edit_orf"  -->
+
+<!-- modal recomb edit -->
+<div class="modal" id="modal_edit_res" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Recombination Site Editing</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form -->
+          <form id="form_edit_res" action="{{url_for('admin.save_res')}}" class="ms-2 mb-2 align-items-center"
+            method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-4">
+                <label for="res_name" class="form-label"><strong>Name</strong></label>
+                <input type="text" class="form-control" id="res_name" name="name" disabled />
+              </div>
+              <div class="col-4">
+                <label for="library_name" class="form-label"><strong>Library Name</strong></label>
+                <input type="text" class="form-control" id="res_library_name" name="library_name" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="res_comment" class="form-label"><strong>Comments</strong></label>
+                <textarea class="form-control" id="res_comment" name="comment"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="res_seq" class="form-label"><strong>Sequence</strong></label>
+                <textarea class="form-control" id="res_seq" name="sequence" disabled></textarea>
+              </div>
+            </div>
+            <fieldset class="mt-2">
+              <legend>
+                <strong>Alignment position</strong>
+                <!-- <button class="btn btn-sm btn-primary" id="rep_add_new">Add New</button>
+                <button class="btn btn-sm btn-danger" id="rep_del_last">Remove Last</button> -->
+              </legend>
+              <div id="res_fragments_rows">
+              </div>
+            </fieldset>
+            <input type="hidden" id="recomb_id" name="recomb_id" value="" />
+            <hr>
+            <div class="row d-flex">
+              <button class="btn btn-primary btn-sm ms-auto" type="submit">Save Recombination Site</button>
+            </div>
+
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_edit_orf"  -->
+
+  {% if pubmeds|length > 0 %}
+  <div class="accordion w-100 mb-lg-1" id="accordionReference">
+    <div class="accordion-item">
+      <h1 class="accordion-header" id="headingSeven">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven"
+          aria-expanded="true" aria-controls="collapseSeven">
+          <span class="material-symbols-outlined align_middle">library_books</span>
+          <span class="content_header align_middle">
+            <a id="l_references" style="text-decoration: none;">&nbsp;References</a>
+          </span>
+        </button>
+      </h1>
+      <div id="collapseSeven" class="accordion-collapse collapse show" aria-labelledby="headingSeven"
+        data-bs-parent="#accordionReference">
+        <div class="accordion-body">
+          <a class="btn btn-success" id="btn_add_ref">Add New Reference</a>
+          <div class="table-responsive mt-1">
+            <table id="table_reference" class="table table-bordered">
+              <thead>
+                <tr class="table-info">
+                  <th scope="col" class="col-1">PMID</th>
+                  <th scope="col" class="col-4">Title</th>
+                  <th scope="col" class="col-3">Authors</th>
+                  <th scope="col" class="col-3">Summary</th>
+                  <th scope="col" class="col-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pubmed in pubmeds %}
+                <tr>
+                  <th scope="row"><a href="https://pubmed.ncbi.nlm.nih.gov/{{pubmed.pubmed_id}}/"
+                      target="_blank">{{pubmed.pubmed_id}}</a></th>
+                  <td>{{pubmed.title}}</td>
+                  <td>{{pubmed.authors}}</td>
+                  <td>{{pubmed.summary}}</td>
+                  <td>
+                    <button type="button" id="del_{{pubmed.pubmed_id}}"
+                      class="btn btn-danger btn-sm pubmed_delete">Delete</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %} <!-- if pubmeds -->
+
+
+<!-- modal for run quality control -->
+<!-- <div class="modal" id="modal_qc" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">TnCentral Quality Control Result</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <textarea id="text_result" name="text_result" style="width: 100%; height: 100%;  font-family: monospace;">
+          </textarea>
+        </form>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="modal" id="modal_qc" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">TnCentral Quality Control Result</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex">
+          <button class="ms-auto btn btn-sm btn-outline-primary mb-1" id="btn_download">
+            <span class="material-symbols-outlined align_middle">
+              file_save
+            </span>
+            <span class="align_middle">Download Output File</span>
+          </button>
+        </div>
+        <form>
+          <textarea id="text_result" name="text_result" style="width: 100%; height: 100%;  font-family: monospace;">
+            </textarea>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal to show image -->
+<div class="modal" id="modal_image" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Snapgene Image Map</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-0">
+          <div class="col-12">
+            <img src="{{ url_for('admin.get_image', type='d', acc=te.accession) }}" id="map_image" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for image upload -->
+<div class="modal" id="modal_map" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Snapgene Map Upload Dialog</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Form -->
+            <form id="image_upload_form" class="ms-2 mb-2 align-items-center" method="post"
+              enctype="multipart/form-data" action="{{ url_for('admin.upload_image_db') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="accession" value="{{ te.accession }}" />
+              <input type="file" class="form-control-file" id="snapgene_image" name="snapgene_image">
+
+              <button class="btn btn-primary w-100" type="submit">Submit New Image</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal for snapgene upload -->
+<div class="modal" id="modal_snap" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Snapgene File Upload Dialog</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Form -->
+            <form id="snap_upload_form" class="ms-2 mb-2 align-items-center" method="post" enctype="multipart/form-data"
+              action="{{url_for('admin.upload_snapgene_db')}}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              <input type="hidden" name="accession" value="{{ te.accession }}" />
+              <input type="file" class="form-control-file" id="snapgene_file" name="snapgene_file">
+
+              <button class="btn btn-primary w-100" type="submit">Submit New File</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal reference edit -->
+<div class="modal" id="modal_add_pubmed" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Adding new reference</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <!-- Form  -->
+          <form id="form_add_pubmed" action="{{url_for('admin.save_reference')}}" class="ms-2 mb-2 align-items-center"
+            method="post">
+            <input name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+            <div class="row">
+              <div class="col-2">
+                <label for="pmid" class="col-form-label"><strong>Pubmed ID</strong></label>
+              </div>
+              <div class="col-3">
+                <input type="text" class="form-control" id="pmid" name="pmid" />
+              </div>
+              <div class="col-3">
+                <a class="btn btn-success" id="btn_fetch">Fetch Data</a>
+              </div>
+              <div class="col-4" id="fetch_loading" style="display: none;">
+                <div class="spinner-border" role="status">
+                </div>
+                <span>Downloading data...</span>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-12">
+                <label for="pub_title" class="form-label"><strong>Title</strong></label>
+                <textarea class="form-control" id="pub_title" name="pub_title" disabled></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="pub_authors" class="form-label"><strong>Authors</strong></label>
+                <textarea class="form-control" id="pub_authors" name="pub_authors" disabled></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="pub_summary" class="form-label"><strong>Journal Summary</strong></label>
+                <textarea class="form-control" id="pub_summary" name="pub_summary" disabled></textarea>
+              </div>
+            </div>
+            <hr>
+            <div class="row d-flex">
+              <button id="pub_submit" class="btn btn-primary btn-sm ms-auto" type="submit">Add Reference</button>
+            </div>
+          </form>
+        </div> <!-- <div class="container-fluid"> -->
+      </div> <!-- <div class="modal-body"> -->
+    </div> <!-- <div class="modal-content"> -->
+  </div> <!-- <div class="modal-dialog modal-dialog-centered"> -->
+</div> <!-- <div class="modal" id="modal_add_pubmed"  -->
+
+
+{% endblock %}
+{% block scripts %}
+<script>
+  const base_url = "{{ url_for('admin.home') }}";
+  const csrf_token = "{{ csrf_token() }}";
+  const gb_acc = "{{ te.accession }}";
+  const entry_id = "{{ te.entry_id }}";
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger"
+    },
+    buttonsStyling: true
+  });
+  const swalWithBootstrapButtons2 = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger"
+    },
+    buttonsStyling: true
+  });
+
+  $(document).ready(function () {
+    $.get("{{url_for('admin.has_file', accession=te.accession, ext='dna')}}", function (text) {
+      $("#txt_snap").html(text);
+    });
+    $.get("{{url_for('admin.has_file', accession=te.accession, ext='png')}}", function (text) {
+      $("#txt_image").html(text);
+    });
+    $('#btn_snap').on('click', function () {
+      $("#modal_snap").modal('show');
+    });
+    $('#btn_show_map').on('click', function () {
+      $("#modal_image").modal('show');
+    });
+    $('#btn_add_ref').on('click', function () {
+      $("#modal_add_pubmed").modal('show');
+    });
+    $('#snap_upload_form').on('submit', (function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            $('#txt_snap').html(data.name);
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "File uploaded successfully!",
+              showConfirmButton: false
+            });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: data.error,
+              showConfirmButton: false
+            });
+          }
+          $("#modal_snap").modal('hide');
+        },
+        error: function (data) {
+          console.log("error");
+          console.log(data);
+        }
+      });
+    }));
+    $('#btn_del_map').on('click', function () {
+      let formData = {
+        csrf_token: csrf_token
+      };
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this image?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var new_url = "{{ url_for('admin.delete_image', type='d',acc=te.accession) }}";
+          $.ajax({
+            type: "DELETE",
+            url: new_url,
+            data: formData,
+            dataType: "json",
+            encode: true,
+            success: function (data) {
+              if (data.status === "ok") {
+                $("#txt_image").html("");
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: "Image successfully deleted.",
+                  showConfirmButton: true,
+                  timer: 2500
+                });
+                image_component = $('#map_image');
+                image_url = "{{ url_for('admin.get_image', type='d',acc=te.accession) }}";
+                image_url += "?t=" + new Date().getTime();
+                $('#map_image').attr('src', image_url);
+              } else {
+                Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: data.error,
+                  showConfirmButton: true
+                });
+              }
+            },
+            error: function (data) {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "An error has occured. Please contact us and report the error.",
+                showConfirmButton: true
+              });
+            }
+          });
+        }
+      });
+    });
+    $('#btn_del_snap').on('click', function () {
+      let formData = {
+        csrf_token: csrf_token
+      };
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this snapgene file?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var new_url = "{{ url_for('admin.delete_snapgene', type='d',acc=te.accession) }}";
+          $.ajax({
+            type: "DELETE",
+            url: new_url,
+            data: formData,
+            dataType: "json",
+            encode: true,
+            success: function (data) {
+              if (data.status === "ok") {
+                $("#txt_snap").html("");
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: "Snapgene file successfully deleted.",
+                  showConfirmButton: true,
+                  timer: 5500
+                });
+              } else {
+                Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: data.error,
+                  showConfirmButton: true
+                });
+              }
+
+            },
+            error: function (data) {
+              Swal.fire({
+                position: "center",
+                icon: "danger",
+                title: "Something went wrong. Please contact admin.",
+                text: data.error,
+                showConfirmButton: false,
+                timer: 2500
+              });
+            }
+          });
+        }
+      });
+    });
+    function get_changed_values() {
+      var formData = {
+        "accession": "{{te.accession}}",
+        "entry_id": "{{te.entry_id}}",
+      };
+      var srv_values = {
+        "type": "{{te.type}}",
+        "group": "{{te.group}}",
+        "family": "{{te.family}}",
+        "synonyms": "{{te.synonyms}}",
+        "partial": "{{te.partial}}",
+        "transposition": "{{te.transposition}}",
+        "comment": "{{te.comment}}",
+
+        "organism": "{{te.organism}}",
+        "taxonomy": "{{te.taxonomy}}",
+        "bacteria_group": "{{te.bacteria_group}}",
+        "molecular_source": "{{te.molecular_source}}",
+
+        "region": "{{te.region}}",
+        "country": "{{te.country}}",
+        "other_loc": "{{te.other_loc}}",
+
+        "date": "{{te.date}}",
+        "first_isolate": "{{te.first_isolate}}",
+
+
+      }
+      var lc_values = {
+        "type": $("#mge_type").val(),
+        "group": $("#mge_group").val(),
+        "family": $("#mge_family").val(),
+        "synonyms": $("#mge_synonyms").val(),
+        "partial": $('input[name="partial"]:checked').val(),
+        "transposition": $('input[name="transposition"]:checked').val(),
+        "comment": $("#mge_comment").val(),
+
+        "organism": $("#mge_organism").val(),
+        "taxonomy": $("#mge_taxonomy").val(),
+        "bacteria_group": $("#mge_bac_group").val(),
+        "molecular_source": $("#mge_source").val(),
+
+        "region": $("#mge_region").val(),
+        "country": $("#mge_country").val(),
+        "other_loc": $("#mge_other_loc").val(),
+        "date": $("#mge_date").val(),
+        "first_isolate": $('input[name="first_isolate"]:checked').val()
+      }
+
+      for (const [key, srv_val] of Object.entries(srv_values)) {
+        // if (srv_val !== lc_values[key]) {
+        formData[key] = lc_values[key];
+        // }  
+      }
+
+      return formData;
+    }
+    $('#btn-save').on('click', function () {
+      var formData = get_changed_values();
+      formData['csrf_token'] = csrf_token;
+
+      $.ajax({
+        type: "POST",
+        url: base_url + "save/db",
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          if (data.status === "ok") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "File successfully saved!",
+              showConfirmButton: false
+            });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "Error",
+              title: data.error,
+              showConfirmButton: false
+            });
+          }
+
+        },
+        error: function (data) {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Something went wrong during request. Please try again.",
+            showConfirmButton: false
+          });
+        }
+      });
+    });
+    $('#btn-run').on('click', function () {
+      var formData = {
+        csrf_token: csrf_token
+      };
+      $.ajax({
+        type: "POST",
+        url: base_url + "run_qc/db/" + gb_acc,
+        data: formData,
+        dataType: "text",
+        encode: true,
+        success: function (data) {
+          if (data === "") {
+            $("#text_result").html("Script returned zero issues.");
+          } else {
+            $("#text_result").html(data);
+          }
+          $("#modal_qc").modal('show');
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+        }
+      });
+    });
+
+    $('#btn_fetch').on('click', function () {
+      let pmid = $('#pmid').val();
+      var formData = {
+        pmid: pmid,
+        csrf_token: csrf_token
+      };
+      $("#fetch_loading").show();
+      $.ajax({
+        type: "GET",
+        url: base_url + "fetch_pubmed/" + pmid,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          if (data.status === "ok") {
+            $("#pub_title").val(data.pub_title);
+            $("#pub_authors").val(data.pub_authors);
+            $("#pub_summary").val(data.pub_summary);
+            $("#fetch_loading").hide();
+          } else {
+            $("#pub_title").val("");
+            $("#pub_authors").val("");
+            $("#pub_summary").val("");
+            $("#fetch_loading").hide();
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: "Something went wrong.",
+              text: data.error,
+              showConfirmButton: false,
+              timer: 2500
+            });
+          }
+        },
+        error: function (data) {
+          $("#pub_title").val("");
+          $("#pub_authors").val("");
+          $("#pub_summary").val("");
+          $("#fetch_loading").hide();
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Something went wrong. Please contact admin.",
+            // text: data.error,
+            showConfirmButton: false,
+            timer: 2500
+          });
+        }
+      });
+    });
+
+    $('#form_add_pubmed').on('submit', (function (e) {
+      e.preventDefault();
+      var formData = {
+        'csrf_token': csrf_token,
+        'pmid': $('#pmid').val(),
+        'entry_id': entry_id
+      };
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        cache: false,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          if (data.status === "ok") {
+            $("#modal_add_pubmed").modal('hide');
+            let url = base_url + '/edit/d/' + gb_acc + "#l_references";
+            window.location = url;
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: data.error,
+              showConfirmButton: true
+            });
+          }
+        },
+        error: function (data) {
+          console.log(data);
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: data,
+            showConfirmButton: true
+          });
+        }
+      });
+    }));
+
+    $('#btn_download').on('click', function () {
+      let url = base_url + '/qc_result/d/' + gb_acc;
+      window.location = url;
+    });
+
+    $('#btn_map').on('click', function () {
+      $("#modal_map").modal('show');
+    });
+    $('#rep_add_new').on('click', function (e) {
+      add_frag_row();
+      e.stopImmediatePropagation();
+      return false;
+    });
+    $('#rep_del_last').on('click', function (e) {
+      remove_frag_row();
+      return false;
+    });
+    $('#image_upload_form').on('submit', (function (e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: function (data) {
+          if (data.status === "ok") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "Image successfully uploaded.",
+              showConfirmButton: true,
+              timer: 2500
+            });
+            $('#txt_image').html(data.name);
+            image_component = $('#map_image');
+            image_url = "{{ url_for('webui.get_image', accession=te.accession) }}";
+            image_url += "?t=" + new Date().getTime();
+            $('#map_image').attr('src', image_url);
+            $("#modal_map").modal('hide');
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              title: data.error,
+              showConfirmButton: true
+            });
+          }
+        },
+        error: function (data) {
+          console.log("error");
+          console.log(data);
+        }
+      });
+    }));
+    $('#form_repeat_edit').on('submit', function (e) {
+      $("#rep_name").prop('disabled', false);
+    });
+
+    $('#table_repeat tbody').on('click', '.rep-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var formData = {
+        csrf_token: csrf_token
+      };
+      var new_url = base_url + "info/repeat/" + id;
+      $.ajax({
+        type: "POST",
+        url: new_url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          $("#rep_id").val(data.id);
+          $("#rep_name").val(data.name);
+          $("#library_name").val(data.library_name);
+          $("#rep_seq").html(data.sequence);
+          $("#rep_comment").html(data.comment);
+          $("#fragments_rows").html("");
+          create_frag_row(data.fragments, "fragments_rows");
+          $("#modal_edit_repeat").modal('show');
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+          alert(new_url);
+        }
+      });
+    });
+
+    $('#table_orf tbody').on('click', '.orf-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var formData = {
+        csrf_token: csrf_token
+      };
+      var new_url = base_url + "info/orf/" + id;
+      $.ajax({
+        type: "POST",
+        url: new_url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          $("#orf_id").val(data.id);
+          $("#orf_name").val(data.name);
+          $("#orf_library_name").val(data.library_name);
+          $("#orf_class").val(data.class);
+          $("#subclass").val(data.subclass);
+          $("#sequence_family").val(data.sequence_family);
+          $("#function").val(data.function);
+          $("#chemistry").val(data.chemistry);
+          $("#target").val(data.target);
+          $("#orf_comment").val(data.comment);
+
+          $("#orf_fragments_rows").html("");
+          create_frag_row(data.fragments, "orf_fragments_rows");
+          $("#modal_edit_orf").modal('show');
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+          alert(new_url);
+        }
+      });
+    });
+
+    $('#table_recomb tbody').on('click', '.recomb-edit', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var formData = {
+        csrf_token: csrf_token
+      };
+      var new_url = base_url + "info/res/" + id;
+      $.ajax({
+        type: "POST",
+        url: new_url,
+        data: formData,
+        dataType: "json",
+        encode: true,
+        success: function (data) {
+          $("#recomb_id").val(data.id);
+          $("#res_name").val(data.name);
+          $("#res_library_name").val(data.library_name);
+          $("#res_seq").html(data.sequence);
+          $("#res_comment").html(data.comment);
+          $("#res_fragments_rows").html("");
+          create_frag_row(data.fragments, "res_fragments_rows");
+          $("#modal_edit_res").modal('show');
+        },
+        error: function (data) {
+          alert("Errroooooooooo");
+          alert(new_url);
+        }
+      });
+    });
+
+    $('#table_reference tbody').on('click', '.pubmed_delete', function () {
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this reference?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var id = $(this).attr("id").match(/\d+/)[0];
+          var formData = {
+            'csrf_token': csrf_token,
+            'pmid': id,
+            'entry_id': entry_id
+          };
+          var new_url = base_url + "delete_reference";
+          $.ajax({
+            type: "DELETE",
+            url: new_url,
+            data: formData,
+            dataType: "json",
+            encode: true,
+            success: function (data) {
+              let url = base_url + '/edit/u/' + gb_acc + "#l_references";
+              window.location = url;
+            },
+            error: function (data) {
+              alert("Errroooooooooo");
+              alert(new_url);
+            }
+          });
+        }
+      });
+    });
+
+  });
+
+  function remove_frag_row(e) {
+    var fragments_list = document.getElementsByName("frag_start");
+    var frag_number = fragments_list.length;
+    if (frag_number > 1) {
+      const row = document.getElementById("rf" + frag_number);
+      row.remove();
+    }
+  }
+
+  function create_frag_row(fragments_list, element) {
+    for (let i = 0; i < fragments_list.length; i++) {
+      add_frag_row(fragments_list[i], element);
+    }
+  }
+
+  function create_label(text) {
+    const newElement = document.createElement("label");
+    newElement.className = "form-label";
+    newElement.innerHTML = "<strong>" + text + "</strong>";
+    return newElement;
+  }
+  function create_text_input(input_id, input_name) {
+    input_object = document.createElement("input");
+    input_object.className = 'form-control';
+    input_object.type = "text";
+    input_object.id = input_id;
+    input_object.name = input_name;
+    return input_object;
+  }
+  function add_frag_row(frag_obj = {}, element) {
+    const box = document.getElementById(element);
+    var frag_number = document.getElementsByName("frag_start").length;
+    var frag_id = frag_number * 3;
+
+    const row = document.createElement("div");
+    row.className = 'row';
+    row.id = "rf" + (frag_number + 1);
+
+    const col1 = document.createElement("div");
+    col1.className = 'col-2';
+
+    const col2 = document.createElement("div");
+    col2.className = 'col-2';
+
+    const col3 = document.createElement("div");
+    col3.className = 'col-2';
+
+    var inputStart = create_text_input("f" + (++frag_id), "frag_start");
+    var inputEnd = create_text_input("f" + (++frag_id), "frag_end");
+    var inputStrand = create_text_input("f" + (++frag_id), "frag_strand");
+
+    if (Object.keys(frag_obj).length !== 0) {
+      inputStart.value = frag_obj['start'];
+      inputStart.disabled = true;
+      inputEnd.value = frag_obj['end'];
+      inputEnd.disabled = true;
+      inputStrand.value = frag_obj['strand'];
+      inputStrand.disabled = true;
+    }
+    if (frag_number === 0) {
+      label = create_label("Start");
+      col1.appendChild(label);
+
+      label = create_label("End");
+      col2.appendChild(label);
+
+      label = create_label("Strand");
+      col3.appendChild(label);
+    }
+
+    col1.appendChild(inputStart);
+    col2.appendChild(inputEnd);
+    col3.appendChild(inputStrand);
+
+    row.appendChild(col1);
+    row.appendChild(col2);
+    row.appendChild(col3);
+
+    box.appendChild(row);
+  }
+</script>
+{% endblock scripts %}

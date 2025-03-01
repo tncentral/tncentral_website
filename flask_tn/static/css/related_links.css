@@ -1,0 +1,25 @@
+/* For the Related links page*/
+.brands {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
+}
+.brands__item a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-decoration: none;
+  color: green;
+}
+
+.brands__item img {
+  width: 130px;
+  height: 150px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.brands__item {
+  flex: 0 0 50%;
+}

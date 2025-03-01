@@ -1,0 +1,17 @@
+.global_center{
+  min-height: 80vh;
+}
+
+.under_dotted{
+  border-bottom: 1px dotted #000;
+}
+
+.ann_header{
+  background: linear-gradient(360deg, #7691bd, #a9c0df);
+  color: aliceblue;
+}
+
+
+.tag_sequence{
+  font-size: 0.95dvw;
+}

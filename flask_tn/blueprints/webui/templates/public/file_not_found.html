@@ -1,0 +1,25 @@
+{% extends "_include/base.html" %}
+{% block title %}File not found{% endblock title %}
+
+{% block center_content %}
+
+<div class="p-5 bg-image rounded-2 center-content"
+  style="background-image: url({{ url_for('static', filename='images/jb1.png') }});">
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <img src="{{ url_for('static', filename='images/file_not_exist.png') }}" class="img-fluid"
+        alt="" style="height: 70dvh;">
+    </div>
+  </div> <!-- <div class="row"> -->
+  
+</div> <!-- <div class="p-5 bg-image rounded-3"  -->
+{% endblock %}
+{% block scripts %}
+<script>
+  $(document).ready(function () {
+    let base_api = "{{ url_for('restapi.api_base') }}";
+    let base_url = "{{ url_for('webui.index') }}";
+    
+  });
+</script>
+{% endblock %}

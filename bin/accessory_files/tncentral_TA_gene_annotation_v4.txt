@@ -1,0 +1,20 @@
+Class	Subclass	Gene	Product	SequenceFamily	Target
+Passenger Gene	Antitoxin	parD	ParD	parD (PDB:4Q2U)	
+Passenger Gene	Antitoxin	parD-noDBD	ParD-noDBD	parD (PDB:4Q2U)	
+Passenger Gene	Antitoxin	phd	Phd	PhdYeFM_antitox (Pfam:PF02604)	
+Passenger Gene	Antitoxin	RHH_6	RHH_6	RHH_6 (Pfam:PF16762)	
+Passenger Gene	Antitoxin	HTH_37	HTH_37	HTH_37 (Pfam:PF13744)	
+Passenger Gene	Antitoxin	HTH	HTH	HTH (PDB:5TN0)	
+Passenger Gene	Antitoxin	abrB	AbrB	"abrB/mazE (PDB:2MRN, Pfam:PF04014)"	
+Passenger Gene	Antitoxin	mnt	Mnt	mnt (PDB:5YEP_A)	
+Passenger Gene	Antitoxin	higA	HigA	higA (Pfam:PF01381)	
+Passenger Gene	Antitoxin	epsilon	Epsilon	Epsilon_antitox (Pfam:PF08998)	
+Passenger Gene	Antitoxin	PIN_12	PIN_12	PIN_12 (Pfam:PF16289)	
+Passenger Gene	Toxin	parE	ParE	ParE_toxin (Pfam:PF05016)	DNA gyrase
+Passenger Gene	Toxin	PIN_3	PIN_3	PIN_3 (Pfam:PF13470)	single stranded RNA
+Passenger Gene	Toxin	Gp49	Gp49	Gp49 (Pfam:PF05973)	ribosome associated mRNA
+Passenger Gene	Toxin	PIN	PIN	PIN (Pfam:PF01850)	single stranded RNA
+Passenger Gene	Toxin	HEPN	HEPN	HEPN (PDB:5YEP)	RNA
+Passenger Gene	Toxin	higB	HigB	"HigB (Pfam:PF05015, PDB:4PX8)"	RNA
+Passenger Gene	Toxin	zeta	Zeta	UDP-N-acetylglucosamine kinase (Pfam:PF06414)	murA cell wall synthesis
+Passenger Gene	Toxin	abiEii	AbiEii	AbiEii (Pfam:PF08843)	

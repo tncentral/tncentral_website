@@ -1,0 +1,216 @@
+{% extends "_include/base_admin.html" %}
+{% block styles %}
+<link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+{% endblock styles %}
+{% block title %}Blast Jobs{% endblock title %}
+
+{% block content %}
+
+<div class="row me-lg-1" style="background-color: bisque;">
+  <h5>
+    <span class="material-icons align_middle">folder</span>
+    <span class="content_header align_middle">
+      Blast Jobs Dashboard
+    </span>
+  </h5>
+</div>
+<div class="row mt-lg-2 mt-sm-1 me-lg-1" id="no_data" style="display: none;">
+  <div class="alert alert-secondary" role="alert">
+    Sorry, but there is not a blast job submitted yet.
+  </div>
+</div>
+<div class="row mt-lg-2 mt-sm-1 me-lg-1 g-0" id="div_table">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table id="tbl_jobs" class="table table-hover display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Job id</th>
+            <th>Status</th>
+            <th>File Size</th>
+            <th>Enqueued at</th>
+            <th>Started at</th>
+            <th>Ended at</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.js"></script>
+<script>
+  const base_open_url = "{{ url_for('webui.index') }}";
+  const base_url = "{{ url_for('admin.home') }}";
+  const csrf_token = "{{ csrf_token() }}";
+  let swal_upload = Swal.mixin();
+  $.fn.dataTable.ext.buttons.create_new = {
+    className: 'btn btn-md btn-success',
+    text: '<span class="material-symbols-outlined align_middle">add_circle</span><span class="align_middle">&nbsp;Add New Line</span>',
+    action: function (e, dt, node, config) {
+      $("#modal_add_line").modal('show');
+    }
+  };
+  $(document).ready(function () {
+    var table = $('#tbl_jobs').DataTable({
+      paging: true,
+      processing: true,
+      responsive: true,
+      serverSide: true,
+      order: [4, 'desc'],
+      language: {
+        "lengthMenu": "Show _MENU_ lines per page",
+        "emptyTable": "No records available",
+        "info": "Showing _START_ to _END_ of _TOTAL_ lines",
+      },
+      ajax: base_url + 'jobs_data/',
+      columns: [
+        { data: 'job_id' },
+        { data: 'status' },
+        { data: 'file_size' },
+        { data: 'enqueued_at' },
+        { data: 'started_at' },
+        { data: 'ended_at' },
+        {
+          data: function (data, type, row, meta) {
+            let btn1 = create_tbl_button("r-" + meta.row, "Open Report", "primary", "btn-show");
+            let btn2 = create_tbl_button("d-" + meta.row, "Delete Job", "danger", "btn-delete");
+            let btn3 = create_tbl_button("e-" + meta.row, "Show Error", "secondary", "btn-error");
+            return btn1 + "&nbsp;" + btn3 + "&nbsp;" + btn2;
+          }
+        }
+      ],
+      columnDefs: [
+        {
+          targets: 6,
+          orderable: false
+        }
+      ]
+    });
+    table.on('draw', function () {
+      if (table.data().any()) {
+        $("#div_table").show();
+        $("#no_data").hide();
+      } else {
+        $("#div_table").hide();
+        $("#no_data").show();
+      }
+    });
+    $('#tbl_jobs tbody').on('click', '.btn-show', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      var url = base_open_url + 'report/blast/' + data.job_id;
+      window.open(url, '_blank');
+    });
+    $('#tbl_jobs tbody').on('click', '.btn-error', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      var url = base_url + 'blast/error/' + data.job_id;
+      $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        async: false,
+        success: function (js_data) {
+          if (js_data.text === "") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: data.job_id + " returned no error.",
+              showConfirmButton: true
+            });
+          } else {
+            Swal.fire({
+              position: "center",
+              icon: "error",
+              // title: js_data.text,
+              text: js_data.text,
+              showConfirmButton: true
+            });
+          }
+        },
+        error: function (js_data) {
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "There was an unexpected error.",
+            showConfirmButton: true
+          });
+        }
+      });
+    });
+
+    $('#tbl_jobs tbody').on('click', '.btn-delete', function () {
+      var id = $(this).attr("id").match(/\d+/)[0];
+      var data = table.row(id).data(); // data.id
+      let formData = {
+        csrf_token: csrf_token
+      };
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn btn-success"
+        },
+        buttonsStyling: true
+      });
+      swalWithBootstrapButtons.fire({
+        title: "Are you sure you wish to delete this job?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var url = base_url + 'blast/remove/' + data.job_id;
+          $.ajax({
+            type: "DELETE",
+            url: url,
+            data: formData,
+            dataType: "json",
+            async: false,
+            success: function (js_data) {
+              if (js_data.status === "ok") {
+                Swal.fire({
+                  position: "center",
+                  icon: "success",
+                  title: data.job_id + " has been deleted from Redis Queue.",
+                  showConfirmButton: true
+                });
+                table.draw();
+              } else {
+                Swal.fire({
+                  position: "center",
+                  icon: "error",
+                  title: "Something went wrong.",
+                  showConfirmButton: true
+                });
+              }
+            },
+            error: function (js_data) {
+              Swal.fire({
+                position: "center",
+                icon: "error",
+                title: "There was an unexpected error.",
+                showConfirmButton: true
+              });
+            }
+          });
+        }
+      });
+    });
+  });
+  function create_tbl_button(id, text, cls_btn, cls_misc) {
+    return `<input type="button" class="btn btn-sm btn-outline-${cls_btn} ${cls_misc}" 
+    id="${id}" value="${text}"/>`;
+  }
+</script>
+{% endblock scripts %}

@@ -1,0 +1,7 @@
+.label-required:before { 
+  content:"*";
+  color:red;
+}
+.small_text{
+  color:red;
+}

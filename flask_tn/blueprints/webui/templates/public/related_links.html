@@ -1,0 +1,75 @@
+{% extends "_include/base.html" %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/related_links.css') }}" />
+{% endblock styles %}
+{% block title %}Related Links{% endblock title %}
+{% block center_content %}
+
+<div class="container-fluid">
+  <ul class="brands">
+    <li class="brands__item">
+      <a href="https://isfinder.biotoul.fr/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_isf.png') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="http://integrall.bio.ua.pt/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_idb.png') }}" />
+        INTEGRALL
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://www.lstmed.ac.uk/services/the-transposon-registry" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_trasponson.png') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="http://db-mml.sjtu.edu.cn/ICEberg/index.php" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_iceberg.gif') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://www.uniprot.org/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_uniprot.png') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://card.mcmaster.ca/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_card.png') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://bioinfo-mml.sjtu.edu.cn/TADB2/index.php" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_tadb.gif') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://www.ebi.ac.uk/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_ebi.png') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://www.ncbi.nlm.nih.gov/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_ncbi.jpg') }}" />
+      </a>
+    </li>
+    <li class="brands__item">
+      <a href="https://pfam.xfam.org/" target="_blank">
+        <img alt="logo"
+        src="{{ url_for('static', filename='images/rl_pfam.gif') }}" />
+      </a>
+    </li>
+  </ul>
+</div> <!-- <div class="container-fluid"> -->
+
+
+{% endblock %}
