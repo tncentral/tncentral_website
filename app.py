@@ -321,13 +321,13 @@ if __name__ == "__main__":
     host = app.config["TNC_APP_HOST"]
     if len(user_args) == 1 and "run" in user_args:
         if host != "127.0.0.1":
-            app.run(port=8000, host=host, debug=True)
+            app.run(port=port, host=host, debug=True)
         else:
-            app.run(port=8000, debug=True)
+            app.run(port=port, debug=True)
     elif len(user_args) == 1 and "run_https" in user_args:
         certificate_file = app.config["CERT_FILE"]
         key_file = app.config["PRIV_KEY"]
-        app.run(port=8000, debug=True, ssl_context=(certificate_file, key_file))
+        app.run(port=port, debug=True, ssl_context=(certificate_file, key_file))
     elif len(user_args) == 0:
         print("Usage: python3 app.py [command]")
         print("  [command] can be one of the following:")
