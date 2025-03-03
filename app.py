@@ -318,7 +318,11 @@ if __name__ == "__main__":
         utils.gb_utils.create_zip(current_dir, snap_dir, "tncentral.dna.zip", "snapgene", "dna")
 
     if len(user_args) == 1 and "run" in user_args:
-        app.run(port=8000, debug=True)
+        host = app.config["APP_HOST"]
+        if host != "127.0.0.1":
+            app.run(port=8000, host=host, debug=True)
+        else:
+            app.run(port=8000, debug=True)
     elif len(user_args) == 1 and "run_https" in user_args:
         certificate_file = app.config["CERT_FILE"]
         key_file = app.config["PRIV_KEY"]
