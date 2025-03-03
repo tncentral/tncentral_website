@@ -457,7 +457,8 @@ def create_blast_zip(current_dir, filename, exts, preffix="nc"):
         for ext in exts:
             new_file = filename + "." + ext
             file_to_add = os.path.join(current_dir, new_file)
-            myzip.write(file_to_add, new_file)
+            if os.path.exists(file_to_add):
+                myzip.write(file_to_add, new_file)
 
 # for rq queue
 def export_pubmed_files():
