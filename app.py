@@ -150,10 +150,10 @@ if __name__ == "__main__":
         # creating external files to download
         # copy snapgene custonFeatures:
         base_snap_lib = os.path.join(base_dir, app.config["TNC_SNAPGENE_BASE_LIBRARY"])
-        custom_features = os.path.join(base_snap_lib, app.config["TNC_SNAPGENE_LIB_FILE"])
+        custom_features = os.path.join(base_snap_lib, app.config["TNC_SNAPGENE_CUSTOM"])
         snapgene_favorites = os.path.join(base_snap_lib, app.config["TNC_SNAPGENE_LIB_FAV"])
-        # shutil.copyfile(custom_features, os.path.join(current_dir, app.config["TNC_SNAPGENE_LIB_FILE"]))
-        os.symlink(custom_features, os.path.join(current_dir, app.config["TNC_SNAPGENE_LIB_FILE"]))
+        # shutil.copyfile(custom_features, os.path.join(current_dir, app.config["TNC_SNAPGENE_CUSTOM"]))
+        os.symlink(custom_features, os.path.join(current_dir, app.config["TNC_SNAPGENE_CUSTOM"]))
         os.symlink(snapgene_favorites, os.path.join(current_dir, app.config["TNC_SNAPGENE_LIB_FAV"]))
         # shutil.copyfile(snapgene_favorites, os.path.join(current_dir, app.config["TNC_SNAPGENE_LIB_FAV"]))
 

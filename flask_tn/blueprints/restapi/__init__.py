@@ -611,7 +611,7 @@ def download_snap(file):
     # if file == "favorites":
     #     file_to_download = os.path.join(dir_current, current_app.config["TNC_SNAPGENE_LIB_FAV"])
     # elif file == "custom":
-    #     file_to_download = os.path.join(dir_current, current_app.config["TNC_SNAPGENE_LIB_FILE"])
+    #     file_to_download = os.path.join(dir_current, current_app.config["TNC_SNAPGENE_CUSTOM"])
     # if file_to_download:
     #     return send_file(file_to_download, as_attachment=True)
     # else:
