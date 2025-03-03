@@ -317,8 +317,9 @@ if __name__ == "__main__":
         # create a zip file containing all unpacked genbanks
         utils.gb_utils.create_zip(current_dir, snap_dir, "tncentral.dna.zip", "snapgene", "dna")
 
+    port = app.config["TNC_APP_PORT"]
+    host = app.config["TNC_APP_HOST"]
     if len(user_args) == 1 and "run" in user_args:
-        host = app.config["APP_HOST"]
         if host != "127.0.0.1":
             app.run(port=8000, host=host, debug=True)
         else:
