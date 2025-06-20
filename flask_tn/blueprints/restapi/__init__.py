@@ -163,7 +163,7 @@ def blast_result_file(job_id):
     perl_command = current_app.config['PERL']
     dir_jobs = os.path.join(dir_current, dir_jobs)
     file = os.path.join(dir_jobs, job_id, job_id+".fa.out")
-    new_comm = f"{perl_command} -pi -e 's/^\s*Database: \/.+\/(\S+.fa)$/Database: $1/g' {file}"
+    new_comm = f"{perl_command} -pi -e 's/^\\s*Database: \\/.+\\/(\\S+.fa)$/Database: $1/g' {file}"
     run(new_comm, stdout=PIPE, stderr=PIPE, shell=True)
     return send_file(file, as_attachment=True)
 

@@ -40,12 +40,12 @@ def sort_internals(main_entry, internals, field_name):
 
 def iterate_fragments(value):
     list_fragments = []
-    match = re.search("^join\((\d+\.\.\d+(,\d+\.\.\d+)*)\)$", value)
+    match = re.search("^join\\((\\d+\\.\\.\\d+(,\\d+\\.\\.\\d+)*)\\)$", value)
     if match != None:
         values = match.group(1)
         parts = values.split(",")
         for part in parts:
-            match = re.search("^(\d+)\.\.(\d+)$", part)
+            match = re.search("^(\\d+)\\.\\.(\\d+)$", part)
             if match != None:
                 fragment = {
                     "start": int(match.group(1)),
@@ -56,12 +56,12 @@ def iterate_fragments(value):
             else:
                 print("ERROOOOEROEOEROROEOREOR")
     else:
-        match = re.search("^complement\(join\((\d+\.\.\d+(,\d+\.\.\d+)*)\)\)$", value)
+        match = re.search("^complement\\(join\\((\\d+\\.\\.\\d+(,\\d+\\.\\.\\d+)*)\\)\\)$", value)
         if match != None:
             values = match.group(1)
             parts = values.split(",")
             for part in parts:
-                match = re.search("^(\d+)\.\.(\d+)$", part)
+                match = re.search("^(\\d+)\\.\\.(\\d+)$", part)
                 if match != None:
                     fragment = {
                         "start": int(match.group(1)),
@@ -78,7 +78,7 @@ def get_start_end(value):
     value = value.replace(" ", "")
     list_fragments = []
     # complement(8781..8818)
-    match = re.search("^complement\((\d+)\.\.(\d+)\)$", value)
+    match = re.search("^complement\\((\\d+)\\.\\.(\\d+)\\)$", value)
     if match != None:
         fragment = {
             "start": int(match.group(1)),
@@ -87,7 +87,7 @@ def get_start_end(value):
         }
         list_fragments.append(fragment)
     else:
-        match = re.search("^(\d+)\.\.(\d+)$", value)
+        match = re.search("^(\\d+)\\.\\.(\\d+)$", value)
         if match != None:
             fragment = {
                 "start": int(match.group(1)),
@@ -119,7 +119,7 @@ def get_dict_from_genbank(gb_block):
     last_key = ""
 
     while not line.startswith("FEATURES"):
-        match = re.search("^\s*PUBMED\s+(\d+)\s*$", line)
+        match = re.search("^\\s*PUBMED\\s+(\\d+)\\s*$", line)
         if match != None:
             pubmed_id = match.group(1)
             if not pubmed_id in pubmed_list:
@@ -134,7 +134,7 @@ def get_dict_from_genbank(gb_block):
     line = gb_block.pop(0)
     accession = ""
     while not line.startswith("ORIGIN"):
-        match = re.search("^\s{5}(\S+)\s+(.+)$", line)
+        match = re.search("^\\s{5}(\\S+)\\s+(.+)$", line)
         if match != None:
             # if internal dict is not empty, we have data from the last feature
             # as a dictionary
@@ -168,13 +168,13 @@ def get_dict_from_genbank(gb_block):
             internal_dict[feature] = {"fragments": list_fragments}
         else:
             line = line.strip()
-            match = re.search("^\/(\w+)=(.+)$", line)
+            match = re.search("^\\/(\\w+)=(.+)$", line)
             if match != None:
                 last_key = match.group(1)
                 value = match.group(2)
                 internal_dict[feature][last_key] = value.strip('"')
             else:
-                match = re.search("^\/(\w+)$", line)
+                match = re.search("^\\/(\\w+)$", line)
                 match2 = re.search("^[xX]+$", line)
                 if match != None or match2 != None:  # tag without value
                     pass

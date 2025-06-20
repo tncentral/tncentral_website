@@ -4,7 +4,7 @@ import os
 
 # https://python-rq.org/docs/
 import redis
-from rq import Worker, Queue, Connection
+from rq import Worker, Queue
 import worker_settings
 
 queues = worker_settings.QUEUES.copy()
@@ -13,9 +13,9 @@ redis_url = worker_settings.REDIS_URL
 conn = redis.from_url(redis_url)
 
 if __name__ == '__main__':
-    with Connection(conn):
-        worker = Worker(list(map(Queue, queues)))
-        worker.work(with_scheduler=True)
+    # with Connection(conn):
+    worker = Worker(list(map(Queue, queues)), connection=conn)
+    worker.work(with_scheduler=True)
 
 def delete_jobs(registry, job_id="", check_expired=True):
     all_jobs = registry.get_job_ids()

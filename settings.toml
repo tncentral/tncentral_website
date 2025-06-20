@@ -1,8 +1,11 @@
 [default]
 # env can be development or production
-ENV='production'
-TNC_HOME='#TOCHANGE'
+ENV='development'
+TNC_HOME='/home/francislon/Projects/tncentral'
 TNC_HOME_PRODUCTION='#TOCHANGE'
+TNC_APP_PORT=6300
+TNC_APP_HOST='localhost'
+
 
 # Main directories
 TNC_DATA_DIR='data/'

@@ -58,7 +58,7 @@ def check_fasta(f_path:str):
     with open(f_path, "r") as reader:
         first_line = reader.readline()
         first_line = first_line.strip()
-        if not re.match("^>\s*\w+", first_line):
+        if not re.match("^>\\s*\\w+", first_line):
             raise InvalidFileException(f_path, "The file provided is not a fasta file.")
 
 def check_textfile(f_path:str):
@@ -158,7 +158,7 @@ def stop_blast_command(job_id:str):
         pids = []
         for line in lines:
             if line.rfind(f'{job_id}/{job_id}.fa -gapopen') != -1:
-                ps = re.split('\s+', line)
+                ps = re.split('\\s+', line)
                 pids.append(int(ps[1]))
     try:
         cmd_output = run(["/usr/bin/kill","-9",str(pids[0])],stdout=PIPE,stderr=PIPE)
@@ -236,7 +236,7 @@ def is_nucleotide(sequence=None, file=None):
         sequence = ""  # Initialize sequence to be read from the file
         with open(file, "r") as reader:
             for line in reader:
-                if re.search("^\s*>.+$", line) is not None:
+                if re.search("^\\s*>.+$", line) is not None:
                     pass  # Skip lines with ">" headers
                 elif re.search(pattern, line, re.I) is not None:
                     is_nuc = False
@@ -244,7 +244,7 @@ def is_nucleotide(sequence=None, file=None):
     else:  # Sequence is provided as a string
         lines = sequence.split('\n')
         for line in lines:
-            if re.search("^\s*>.+$", line) is not None:
+            if re.search("^\\s*>.+$", line) is not None:
                 pass  # Skip lines with ">" headers
             elif re.search(pattern, line, re.I) is not None:
                 is_nuc = False
