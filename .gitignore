@@ -2,3 +2,9 @@
 __pycache__/
 data/
 logs/
+gunicorn_config.py
+apache.wsgi
+worker_settings.py
+settings.toml
+rq_default_settings.py
+rq_high_settings.py
