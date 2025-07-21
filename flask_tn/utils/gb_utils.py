@@ -202,7 +202,7 @@ def get_dict_from_genbank(gb_block):
     fasta_sequence = ""
     line = gb_block.pop(0).lstrip()
     while not line.startswith("//"):
-        line = re.sub("[0-9\s]+", "", line).strip()
+        line = re.sub("[0-9\\s]+", "", line).strip()
         fasta_sequence += line.upper()
         line = gb_block.pop(0)
 
@@ -919,7 +919,7 @@ def get_pubmed_from_lines(list_lines):
     for line in list_lines:
         line = line.strip()
         if line != "":
-            match = re.search("([A-Z]+)\s*\-\s+(.+)$", line)
+            match = re.search("([A-Z]+)\\s*\\-\\s+(.+)$", line)
             if match != None:
                 last = match.group(1)
                 if last in hash_line:
