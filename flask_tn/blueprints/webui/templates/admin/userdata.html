@@ -292,7 +292,6 @@
           let accession = data.accession;
           let in_prod = '0';
           let csrf = $("#csrf_token").val();
-          console.log('before delete');
           delete_genbank(accession, in_prod, csrf);
           swalWithBootstrapButtons.fire({
             title: "Deleted!",
