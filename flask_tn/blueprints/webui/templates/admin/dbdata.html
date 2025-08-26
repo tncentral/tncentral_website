@@ -98,7 +98,8 @@
 {% block scripts %}
 <script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
 <script>
-  let base_url = "{{ url_for('admin.home') }}";
+  // let base_url = "{{ url_for('admin.home') }}";
+  const base_url = window.location.origin + "/admin/";
   function download_selection(db, ext, dt) {
     let ext_param = "ext=" + ext;
     let rows_selected = dt.rows({ selected: true });

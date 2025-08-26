@@ -45,8 +45,8 @@
 {% block scripts %}
 <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-2.0.0/b-3.0.0/r-3.0.0/datatables.min.js"></script>
 <script>
-  const base_url = "{{ url_for('admin.home') }}";
-
+  // const base_url = "{{ url_for('admin.home') }}";
+  const base_url = window.location.origin + "/admin/";
   $(document).ready(function () {
     var table = $('#tbl_log').DataTable({
       paging: true,

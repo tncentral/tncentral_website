@@ -112,7 +112,8 @@
 {% block scripts %}
 <script src="https://cdn.datatables.net/v/bs5/dt-2.0.1/b-3.0.0/r-3.0.0/sl-2.0.0/datatables.min.js"></script>
 <script>
-  let base_url = "{{ url_for('admin.home') }}";
+  // let base_url = "{{ url_for('admin.home') }}";
+  const base_url = window.location.origin + "/admin/";
   function download_selection(db, ext, dt) {
     let ext_param = "ext=" + ext;
     let rows_selected = dt.rows({ selected: true });
@@ -120,7 +121,7 @@
       alert('Please select at least one file to download.');
       return 0;
     }
-    let url = base_url;
+    // let url = base_url;
     let check_url = base_url;
     const formData = {
       'csrf_token': "{{ csrf_token() }}"
@@ -304,7 +305,7 @@
     });
 
     function delete_genbank(accession, in_prod, csrf) {
-      const url = base_url + 'genbank/' + accession;
+      const url = base_url + '/genbank/' + accession;
       const formData = {
         'in_prod': in_prod.toString(),
         'csrf_token': csrf
@@ -328,8 +329,6 @@
       });
     }
     $('#checkBox').on('click', function () {
-      console.log('antes');
-      console.log(table.rows({ selected: true }).count());
       if ($('#checkBox').is(':checked')) {
         table.rows().select();
       }
