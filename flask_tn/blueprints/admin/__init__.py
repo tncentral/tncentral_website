@@ -486,16 +486,28 @@ def run_qc(type, gb_acc):
     filename_out = filename + ".out"
     command = f"{perl} {qc_script} '{filename}' {qc_acc} '{filename_out}'"
     result = run(command, stdout=PIPE, stderr=PIPE, shell=True)
+    status = "ok"
+    output = ""
     if not os.path.exists(filename_out) and result.stderr != "b''":
-        with open(filename_out, "wb") as writer:
-            writer.write(
-                b"There was an error running the script. Please contact admin.\n"
-            )
-            writer.write(result.stderr)
+        status = "error"
+        output=  "There was an error running the script. Please contact admin.\n" + result.stderr
+    else:
+        with open(filename_out, "r") as reader:
+            output = reader.read()
+    status = {"status": status, "output": output}
+    return jsonify(status)
 
-    stdout = result.stdout
-    stderr = result.stderr
-    text = ""
+    # result = run(command, stdout=PIPE, stderr=PIPE, shell=True)
+    # if not os.path.exists(filename_out) and result.stderr != "b''":
+    #     with open(filename_out, "wb") as writer:
+    #         writer.write(
+    #             b"There was an error running the script. Please contact admin.\n"
+    #         )
+    #         writer.write(result.stderr)
+
+    # stdout = result.stdout
+    # stderr = result.stderr
+    # text = ""
     return send_file(filename_out, mimetype="text/plain")
 
 
