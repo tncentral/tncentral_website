@@ -1021,14 +1021,13 @@
         type: "POST",
         url: base_url + "run_qc/u/" + gb_acc,
         data: formData,
-        dataType: "json",
-        // dataType: "text",
+        dataType: "text",
         encode: true,
         success: function (data) {
-          if (data.status === "ok") {
+          if (data === "") {
             $("#text_result").html("Script returned zero issues.");
           } else {
-            $("#text_result").html(data.output);
+            $("#text_result").html(data);
           }
           $("#modal_qc").modal('show');
         },
