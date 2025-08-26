@@ -890,7 +890,7 @@
 {% endblock %}
 {% block scripts %}
 <script>
-  const base_url = "{{ url_for('admin.home') }}";
+  const base_url = window.location.origin + "/admin/";
   const csrf_token = "{{ csrf_token() }}";
   const gb_acc = "{{ user_gb.te_entry.accession }}";
   const entry_id = "{{ user_gb.te_entry.entry_id }}";
@@ -1262,7 +1262,7 @@
         reverseButtons: false
       }).then((result) => {
         if (result.isConfirmed) {
-          var new_url = "{{ url_for('admin.delete_image', type='u',acc=user_gb.te_entry.accession) }}";
+          const new_url = base_url + "image/u/" + gb_acc;
           $.ajax({
             type: "DELETE",
             url: new_url,
@@ -1317,7 +1317,7 @@
         reverseButtons: false
       }).then((result) => {
         if (result.isConfirmed) {
-          var new_url = "{{ url_for('admin.delete_snapgene', type='u',acc=user_gb.te_entry.accession) }}";
+          const new_url = base_url + "snapgene/u/" + gb_acc;
           $.ajax({
             type: "DELETE",
             url: new_url,
@@ -1358,37 +1358,6 @@
         }
       });
     });
-    function delete_image(e) {
-      var formData = {
-        csrf_token: csrf_token
-      };
-      var new_url = "{{ url_for('admin.delete_image', type='u',acc=user_gb.te_entry.accession) }}";
-      $.ajax({
-        type: "DELETE",
-        url: new_url,
-        data: formData,
-        dataType: "json",
-        encode: true,
-        success: function (data) {
-          if (data.status === "ok") {
-            $("txt_image").html("");
-          } else {
-            Swal.fire({
-              position: "center",
-              icon: "error",
-              title: data.error,
-              showConfirmButton: true
-            });
-          }
-        },
-        error: function (data) {
-          alert("Errroooooooooo");
-          alert(new_url);
-        }
-      });
-      e.stopImmediatePropagation();
-      return false;
-    }
     $('#image_upload_form').on('submit', (function (e) {
       e.preventDefault();
       var formData = new FormData(this);
